@@ -1,0 +1,98 @@
+/* For use in src/lib/core/theming/_palette.scss */
+$ssw-brand: (
+    50 : #f9e8e8,
+    100 : #f0c6c6,
+    200 : #e6a0a0,
+    300 : #db7a7a,
+    400 : #d45e5e,
+    500 : #cc4141,
+    600 : #c73b3b,
+    700 : #c03232,
+    800 : #b92a2a,
+    900 : #ad1c1c,
+    A100 : #ffe5e5,
+    A200 : #ffb2b2,
+    A400 : #ff7f7f,
+    A700 : #ff6565,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+$ssw-gray: (
+  50 : #e7e7e7,
+  100 : #c2c2c2,
+  200 : #999999,
+  300 : #707070,
+  400 : #525252,
+  500 : #333333,
+  600 : #2e2e2e,
+  700 : #272727,
+  800 : #202020,
+  900 : #141414,
+  A100 : #ef6e6e,
+  A200 : #ea4040,
+  A400 : #f60000,
+  A700 : #dd0000,
+  contrast: (
+      50 : #000000,
+      100 : #000000,
+      200 : #000000,
+      300 : #ffffff,
+      400 : #ffffff,
+      500 : #ffffff,
+      600 : #ffffff,
+      700 : #ffffff,
+      800 : #ffffff,
+      900 : #ffffff,
+      A100 : #000000,
+      A200 : #ffffff,
+      A400 : #ffffff,
+      A700 : #ffffff,
+    )
+);
+
+@import '~@angular/material/theming';
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat-core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$ssw-gs-primary: mat-palette($ssw-brand);
+$ssw-gs-accent:  mat-palette($ssw-gray);
+
+// The warn palette is optional (defaults to red).
+$ssw-gs-warn:    mat-palette($mat-red);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as `color` or `typography`.
+$ssw-gs-theme: mat-light-theme((
+  color: (
+    primary: $ssw-gs-primary,
+    accent: $ssw-gs-accent,
+    warn: $ssw-gs-warn,
+  )
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($ssw-gs-theme);
