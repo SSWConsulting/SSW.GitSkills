@@ -10,6 +10,6 @@ export class AppComponent {
   title = 'GitSkills';
 
   constructor(private router: Router) {
-    router.navigate(['github']);
+    router.navigate(['home']);
   }
 }

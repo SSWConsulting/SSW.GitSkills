@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GithubService } from './github.service';
 import { Apollo } from 'apollo-angular';
-import { GetOrgQuery_organization } from './operation-result-types';
+import { Organization } from './operation-result-types';
 import gql from 'graphql-tag';
 
 @Component({
@@ -26,7 +26,7 @@ export class GithubComponent implements OnInit {
   constructor(private apollo: Apollo) { }
 
   fetchGithub() {
-    this.apollo.watchQuery<GetOrgQuery_organization>({
+    this.apollo.watchQuery<Organization>({
       query: gql `
       query {
         organization(login:"sswconsulting"){

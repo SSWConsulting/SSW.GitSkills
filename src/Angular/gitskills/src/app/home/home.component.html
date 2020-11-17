@@ -1,0 +1,14 @@
+<div *ngIf="loading">
+  Loading...
+  <mat-spinner color="primary"></mat-spinner>
+</div>
+
+<div *ngIf="!loading && !gotError">
+  Org name:
+  {{orgName}}
+</div>
+
+<div *ngIf="gotError">
+  Error!
+  {{errorMessage}}
+</div>

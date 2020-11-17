@@ -1,16 +1,28 @@
-import { Injectable, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { GithubService } from '../GitHub/github/github.service';
 import { Apollo } from 'apollo-angular';
+import { Organization } from '../GitHub/github/operation-result-types';
 import gql from 'graphql-tag';
-import { Organization, OrganizationMemberConnection } from './operation-result-types';
+import { ApolloError, Observable } from '@apollo/client/core';
 
-@Injectable({
-  providedIn: 'root'
+
+@Component({
+  selector: 'gs-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss']
 })
-export class GithubService {
+export class HomeComponent implements OnInit {
+  loading: boolean = true;
+  gotError: boolean = false;
+  errorMessage: string;
 
-  repos: any;
-  loading = true;
-  error: any;
+  orgName: string;
+
+  ngOnInit(): void {
+    this.fetchGithub();
+  }
+
+  repos: Organization = { __typename: null, name: null, membersWithRole: null };
 
   constructor(private apollo: Apollo) { }
 
@@ -51,10 +63,25 @@ export class GithubService {
       }
       `,
     })
-    .valueChanges.subscribe(result => {
-      this.repos = result.data && result.data.membersWithRole;
+    .valueChanges.subscribe((result) => {
+      console.log('got result');
+
+      console.log(result.data);
+
+      this.repos = result.data && result.data;
+      this.orgName = result.data.name;
+
       this.loading = result.loading;
-      this.error = result.error;
+      this.gotError = false;
+    },
+    (err) => {
+      this.handleError(err);
+      this.loading = false;
     })
+  }
+
+  handleError(msg: string) {
+    this.gotError = true;
+    this.errorMessage = msg;
   }
 }

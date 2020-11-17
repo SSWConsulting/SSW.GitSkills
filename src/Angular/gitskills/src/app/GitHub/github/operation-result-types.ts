@@ -7,73 +7,73 @@
 // GraphQL query operation: GetOrgQuery
 // ====================================================
 
-export interface GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection_commitContributionsByRepository_repository_languages_nodes {
+export interface Language {
   __typename: "Language";
   name: string;  // The name of the current language.
 }
 
-export interface GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection_commitContributionsByRepository_repository_languages {
+export interface LanguageConnection {
   __typename: "LanguageConnection";
-  nodes: (GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection_commitContributionsByRepository_repository_languages_nodes | null)[] | null;  // A list of nodes.
+  nodes: (Language | null)[] | null;  // A list of nodes.
 }
 
-export interface GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection_commitContributionsByRepository_repository_repositoryTopics_nodes_topic {
+export interface Topic {
   __typename: "Topic";
   name: string;  // The topic's name.
 }
 
-export interface GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection_commitContributionsByRepository_repository_repositoryTopics_nodes {
+export interface RepositoryTopic {
   __typename: "RepositoryTopic";
-  topic: GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection_commitContributionsByRepository_repository_repositoryTopics_nodes_topic;  // The topic.
+  topic: Topic;  // The topic.
 }
 
-export interface GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection_commitContributionsByRepository_repository_repositoryTopics {
+export interface RepositoryTopicConnection {
   __typename: "RepositoryTopicConnection";
-  nodes: (GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection_commitContributionsByRepository_repository_repositoryTopics_nodes | null)[] | null;  // A list of nodes.
+  nodes: (RepositoryTopic | null)[] | null;  // A list of nodes.
 }
 
-export interface GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection_commitContributionsByRepository_repository {
+export interface Repository {
   __typename: "Repository";
   description: string | null;                                                                                                                            // The description of the repository.
-  languages: GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection_commitContributionsByRepository_repository_languages | null;         // A list containing a breakdown of the language composition of the repository.
-  repositoryTopics: GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection_commitContributionsByRepository_repository_repositoryTopics;  // A list of applied repository-topic associations for this repository.
+  languages: LanguageConnection | null;         // A list containing a breakdown of the language composition of the repository.
+  repositoryTopics: RepositoryTopicConnection;  // A list of applied repository-topic associations for this repository.
 }
 
-export interface GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection_commitContributionsByRepository_contributions {
+export interface CreatedContributionCommitConnection {
   __typename: "CreatedCommitContributionConnection";
   totalCount: number;  // Identifies the total count of commits across days and repositories in the connection.
 }
 
-export interface GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection_commitContributionsByRepository {
+export interface CommitContributionByRepository {
   __typename: "CommitContributionsByRepository";
-  repository: GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection_commitContributionsByRepository_repository;        // The repository in which the commits were made.
-  contributions: GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection_commitContributionsByRepository_contributions;  // The commit contributions, each representing a day.
+  repository: Repository;        // The repository in which the commits were made.
+  contributions: CreatedContributionCommitConnection;  // The commit contributions, each representing a day.
 }
 
-export interface GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection {
+export interface ContributionsCollection {
   __typename: "ContributionsCollection";
-  commitContributionsByRepository: GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection_commitContributionsByRepository[];  // Commit contributions made by the user, grouped by repository.
+  commitContributionsByRepository: CommitContributionByRepository[];  // Commit contributions made by the user, grouped by repository.
 }
 
-export interface GetOrgQuery_organization_membersWithRole_nodes {
+export interface User {
   __typename: "User";
   name: string | null;                                                                              // The user's public profile name.
-  contributionsCollection: GetOrgQuery_organization_membersWithRole_nodes_contributionsCollection;  // The collection of contributions this user has made to different repositories.
+  contributionsCollection: ContributionsCollection;  // The collection of contributions this user has made to different repositories.
 }
 
-export interface GetOrgQuery_organization_membersWithRole {
+export interface OrganizationMemberConnection {
   __typename: "OrganizationMemberConnection";
-  nodes: (GetOrgQuery_organization_membersWithRole_nodes | null)[] | null;  // A list of nodes.
+  nodes: (User | null)[] | null;  // A list of nodes.
 }
 
-export interface GetOrgQuery_organization {
+export interface Organization {
   __typename: "Organization";
   name: string | null;                                        // The organization's public profile name.
-  membersWithRole: GetOrgQuery_organization_membersWithRole;  // A list of users who are members of this organization.
+  membersWithRole: OrganizationMemberConnection;  // A list of users who are members of this organization.
 }
 
 export interface GetOrgQuery {
-  organization: GetOrgQuery_organization | null;  // Lookup a organization by login.
+  organization: Organization | null;  // Lookup a organization by login.
 }
 
 /* tslint:disable */
