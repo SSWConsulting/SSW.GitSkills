@@ -18,8 +18,6 @@ namespace gitskills.Github
         public List<string> Languages { get; set; } = new List<string>();
         public List<string> Topics { get; set; } = new List<string>();
 
-        public List<string> UserNameList {get;set;} = new List<string>();
-
         public List<OrgMember> Users { get; set; } = new List<OrgMember>();
 
         public GithubService(string token)
@@ -49,10 +47,18 @@ namespace gitskills.Github
           var userList = organization.MembersWithRole.Nodes;
 
           userList.ForEach(u => u.ContributionsCollection.CommitContributionsByRepository.ForEach(r => {
-            var user = new OrgMember();
-            user.Name = u.Name;
+            
+            OrgMember user;
+            user = Users.Where(x => x.Name == u.Name).FirstOrDefault();
 
-            UserNameList.Add(user.Name);
+            if(user == null)
+            {
+              user = new OrgMember();
+              user.Name = u.Name;
+              Users.Add(user);
+            }
+
+
 
             r.Repository.Languages.Nodes.ForEach(l => {
               if(!Languages.Contains(l.Name))
@@ -94,8 +100,6 @@ namespace gitskills.Github
                 });
               }
             });
-
-            Users.Add(user);
 
           }));
 

@@ -1,4 +1,5 @@
 ﻿@using gitskills.Models
+@using gitskills.Components
 @inject StateContainer StateContainer
 @inject GithubService githubService
 @implements IDisposable
@@ -17,61 +18,54 @@ else
     if (!isError)
     {
         <p><strong>Org name: </strong>@name</p>
-        <p>Found Languages:</p>
-        <p>
-            @foreach (var lang in Languages)
-            {
-                <Badge Color="Color.Primary" class="topic-badge">@lang</Badge>
-            }
-        </p>
-        <p>Found topics:</p>
-        <p>
-            @foreach (var topic in Topics)
-            {
-                <Badge Color="Color.Primary" class="topic-badge">@topic</Badge>
-            }
-        </p>
+        
+        <Accordion>
+            <Collapse Visible="@languagesVisible">
+                <CollapseHeader>
+                    <Heading Size="HeadingSize.Is5">
+                        <Button Clicked="@(()=> languagesVisible = !languagesVisible)">Languages</Button>
+                    </Heading>
+                </CollapseHeader>
+                <CollapseBody>
+                    @foreach (var lang in Languages)
+                    {
+                        <Badge Color="Color.Primary" class="topic-badge">@lang</Badge>
+                    }
+                </CollapseBody>
+            </Collapse>
+            <Collapse Visible="@topicsVisible">
+                <CollapseHeader>
+                    <Heading Size="HeadingSize.Is5">
+                        <Button Clicked="@(()=> topicsVisible = !topicsVisible)">Topics</Button>
+                    </Heading>
+                </CollapseHeader>
+                <CollapseBody>
+                    @foreach (var topic in Topics)
+                    {
+                        <Badge Color="Color.Primary" class="topic-badge">@topic</Badge>
+                    }
+                </CollapseBody>
+            </Collapse>
+        </Accordion>
 
-        <p>
-            Angular Users:
-            <br>
-            @angularUsers
-        </p>
-
-        <p>
-            Labels:<br>
-            @foreach (var label in Labels)
-            {
-                @label
-            }
-        </p>
-        <p>
-            Skill count:
-            <br>
-            @foreach (var sk in skillCount)
-            {
-                @sk
-            }
-        </p>
-
-        <p>Users:
-            <br>
-            @foreach (var user in githubService.UserNameList)
-            {
-                @user
-            }
-        </p>
-        <Chart Type="ChartType.Pie" TItem="int" ref="@angularData"/>
+        <Piechart Labels="@Labels" Values="@skillCount"></Piechart>
     }
 }
 
-@if (isError)
+@* @if (isError)
 {
     <p><strong>Error</strong></p>
     <p>@errorMessage</p>
     <p>Stack trace:</p>
     <p>@stacktrace</p>
-}
+} *@
+
+<Snackbar @ref="snackbarError" Color="SnackbarColor.Danger">
+    <SnackbarBody>
+        <p>@errorMessage</p>
+        <p>Please reload the page to try again</p>
+    </SnackbarBody>
+</Snackbar>
 
 @code {
 
@@ -86,14 +80,13 @@ else
 
     string stacktrace = "";
 
-    public PieChart<int> angularData = new PieChart<int>();
+    public bool languagesVisible { get; set; } = false;
+    public bool topicsVisible { get; set; } = false;
 
-    public string[] Labels = {};
+    public List<string> Labels {get;set;} = new List<string>();
 
     public List<int> skillCount = new List<int>();
-
-    public int angularUsers { get; set; }
-
+    Snackbar snackbarError;
 
     protected override async Task OnInitializedAsync()
     {
@@ -120,7 +113,7 @@ else
 
             name = result.Name;
 
-            await HandleRedraw();
+            SeedValues();
         }
         catch (Exception ex)
         {
@@ -128,46 +121,26 @@ else
             isError = true;
             errorMessage = ex.Message;
             stacktrace = ex.StackTrace;
+            snackbarError.Show();
         }
     }
 
-    @* protected override async Task OnAfterRenderAsync(bool firstRender)
+    void SeedValues()
     {
-        if(firstRender)
-        {
-            await HandleRedraw();
-        }
-    } *@
-
-    async Task HandleRedraw()
-    {
-        await angularData.Clear();
-
         var userList = githubService.Users
-            .Where(u => u.Skills.Where(s => s.Tech == "angular").Any())
+            .Where(u => u.Skills.Where(s => s.Tech == "C#").Any())
             .ToList();
-
-        angularUsers = githubService.Users.Count;//userList.Count;
 
         userList.ForEach(u => 
         {
-            Labels.Append(u.Name);
-            var skill = u.Skills.Where(s => s.Tech == "angular").First();
-            skillCount.Add(skill.CommitCount);
+            Labels.Add(u.Name);
+            int skill = u.Skills
+                .Where(s => s.Tech == "C#")
+                .Select(s => s.CommitCount)
+                .Sum();
+            
+            skillCount.Add(skill);
         });
-
-        List<string> backgroundColors = new List<string> { ChartColor.FromRgba( 255, 99, 132, 0.2f ), ChartColor.FromRgba( 54, 162, 235, 0.2f ), ChartColor.FromRgba( 255, 206, 86, 0.2f ), ChartColor.FromRgba( 75, 192, 192, 0.2f ), ChartColor.FromRgba( 153, 102, 255, 0.2f ), ChartColor.FromRgba( 255, 159, 64, 0.2f ) };
-        List<string> borderColors = new List<string> { ChartColor.FromRgba( 255, 99, 132, 1f ), ChartColor.FromRgba( 54, 162, 235, 1f ), ChartColor.FromRgba( 255, 206, 86, 1f ), ChartColor.FromRgba( 75, 192, 192, 1f ), ChartColor.FromRgba( 153, 102, 255, 1f ), ChartColor.FromRgba( 255, 159, 64, 1f ) };
-
-        PieChartDataset<int> angularSkillCount = new PieChartDataset<int>
-        {
-            Label = "Users with Angular commits",
-            Data = skillCount,
-            BackgroundColor = backgroundColors,
-            BorderColor = borderColors
-        };
-
-        await angularData.AddLabelsDatasetsAndUpdate(Labels , angularSkillCount);
     }
 
     public void Dispose()

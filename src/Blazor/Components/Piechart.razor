@@ -1,0 +1,80 @@
+<Button Clicked="@(async () => await HandleRedraw())">Redraw</Button>
+
+<PieChart @ref="pieChart" TItem="int" />
+
+@code{
+    PieChart<int> pieChart;
+    
+    [Parameter]
+    public List<string> Labels { get; set; } = new List<string>();
+
+    [Parameter]
+    public List<int> Values { get; set; } = new List<int>();
+
+    List<string> borderColors { get; set; }
+    List<string> backgroundColors { get; set; }
+
+    protected override async Task OnAfterRenderAsync( bool firstRender )
+    {
+        if ( firstRender )
+        {
+            await HandleRedraw();
+        }
+    }
+
+    async Task HandleRedraw()
+    {
+        SeedChartColors();
+
+        await pieChart.Clear();
+
+        await pieChart.AddLabelsDatasetsAndUpdate( GetChartLabels(), GetPieChartDataset() );
+    }
+
+    PieChartDataset<int> GetPieChartDataset()
+    {
+        return new PieChartDataset<int>
+        {
+            Label = "# of randoms",
+            Data = GetChartData(),
+            BackgroundColor = backgroundColors,
+            BorderColor = borderColors
+        };
+    }
+
+    string[] chartLabels = { "Red", "Blue", "Yellow", "Green", "Purple", "Orange" };
+
+    List<int> GetChartData()
+    {
+        return Values;
+    }
+
+    string[] GetChartLabels()
+    {
+        return Labels.ToArray();
+    }
+
+    void SeedChartColors()
+    {
+        int count = Labels.Count;
+
+        var r = new Random( DateTime.Now.Millisecond );
+
+        backgroundColors = new List<string> ();
+        
+        borderColors = new List<string>();
+
+        for(int i = 0; i < count; i++ )
+        {
+            var r1 = Convert.ToByte(r.Next(0, 255));
+            var r2 = Convert.ToByte(r.Next(0, 255));
+            var r3 = Convert.ToByte(r.Next(0, 255));
+
+            var backCol = ChartColor.FromRgba(r1, r2, r3, 0.2f);
+            var borderCol = ChartColor.FromRgba(r1, r2, r3, 1f);
+
+            backgroundColors.Add(backCol);
+            borderColors.Add(borderCol);
+        }
+    }
+}
