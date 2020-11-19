@@ -3,8 +3,8 @@
 # live syntax, and validation errors highlighted within the text.
 
 # We'll get you started with a simple query showing your username!
-query { 
-  organization(login:"sswconsulting"){
+query OrganizationQuery ($name: String) { 
+  organization(login: $name){
     name
     membersWithRole(first:100){
       nodes{

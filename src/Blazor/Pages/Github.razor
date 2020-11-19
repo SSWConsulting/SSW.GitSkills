@@ -1,0 +1,61 @@
+﻿@page "/github"
+
+<h3>Github Queries</h3>
+
+@if (isLoading)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    if (!isError)
+    {
+        <p><strong>Org name: </strong>@name</p>
+    }
+}
+
+@if (isError)
+{
+    <p><strong>Error</strong></p>
+    <p>@errorMessage</p>
+    <p>Stack trace:</p>
+    <p>@stacktrace</p>
+}
+
+
+@code {
+
+    private GithubService githubService;
+
+    private bool isError { get; set; }
+    private string errorMessage = "";
+    private bool isLoading { get; set; }
+    string name = "";
+
+    string stacktrace = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        isLoading = true;
+        isError = false;
+
+        try
+        {
+            githubService = new GithubService("005748d0ebf8d93fda5d4b36fab73f48fa4b5207");
+
+            isLoading = false;
+
+            var result = await githubService.GetOrgQuery("sswconsulting");
+
+            name = result.Name;
+        }
+        catch (Exception ex)
+        {
+            isLoading = false;
+            isError = true;
+            errorMessage = ex.Message;
+            stacktrace = ex.StackTrace;
+        }
+    }
+}

@@ -2,7 +2,7 @@
 //
 // To parse this JSON data, add NuGet 'Newtonsoft.Json' then do one of these:
 //
-//    using Gitskills.Github;
+//    using gitskills.Github;
 //
 //    var language = Language.FromJson(jsonString);
 //    var languageConnection = LanguageConnection.FromJson(jsonString);
@@ -18,7 +18,7 @@
 //    var organization = Organization.FromJson(jsonString);
 //    var getOrgQuery = GetOrgQuery.FromJson(jsonString);
 
-namespace Gitskills.Github
+namespace gitskills.Github
 {
     using System;
     using System.Collections.Generic;
@@ -182,84 +182,84 @@ namespace Gitskills.Github
 
     public partial class Language
     {
-        public static Language FromJson(string json) => JsonConvert.DeserializeObject<Language>(json, Gitskills.Github.Converter.Settings);
+        public static Language FromJson(string json) => JsonConvert.DeserializeObject<Language>(json, gitskills.Github.Converter.Settings);
     }
 
     public partial class LanguageConnection
     {
-        public static LanguageConnection FromJson(string json) => JsonConvert.DeserializeObject<LanguageConnection>(json, Gitskills.Github.Converter.Settings);
+        public static LanguageConnection FromJson(string json) => JsonConvert.DeserializeObject<LanguageConnection>(json, gitskills.Github.Converter.Settings);
     }
 
     public partial class Topic
     {
-        public static Topic FromJson(string json) => JsonConvert.DeserializeObject<Topic>(json, Gitskills.Github.Converter.Settings);
+        public static Topic FromJson(string json) => JsonConvert.DeserializeObject<Topic>(json, gitskills.Github.Converter.Settings);
     }
 
     public partial class RepositoryTopic
     {
-        public static RepositoryTopic FromJson(string json) => JsonConvert.DeserializeObject<RepositoryTopic>(json, Gitskills.Github.Converter.Settings);
+        public static RepositoryTopic FromJson(string json) => JsonConvert.DeserializeObject<RepositoryTopic>(json, gitskills.Github.Converter.Settings);
     }
 
     public partial class RepositoryTopicConnection
     {
-        public static RepositoryTopicConnection FromJson(string json) => JsonConvert.DeserializeObject<RepositoryTopicConnection>(json, Gitskills.Github.Converter.Settings);
+        public static RepositoryTopicConnection FromJson(string json) => JsonConvert.DeserializeObject<RepositoryTopicConnection>(json, gitskills.Github.Converter.Settings);
     }
 
     public partial class Repository
     {
-        public static Repository FromJson(string json) => JsonConvert.DeserializeObject<Repository>(json, Gitskills.Github.Converter.Settings);
+        public static Repository FromJson(string json) => JsonConvert.DeserializeObject<Repository>(json, gitskills.Github.Converter.Settings);
     }
 
     public partial class CreatedContributionCommitConnection
     {
-        public static CreatedContributionCommitConnection FromJson(string json) => JsonConvert.DeserializeObject<CreatedContributionCommitConnection>(json, Gitskills.Github.Converter.Settings);
+        public static CreatedContributionCommitConnection FromJson(string json) => JsonConvert.DeserializeObject<CreatedContributionCommitConnection>(json, gitskills.Github.Converter.Settings);
     }
 
     public partial class CommitContributionByRepository
     {
-        public static CommitContributionByRepository FromJson(string json) => JsonConvert.DeserializeObject<CommitContributionByRepository>(json, Gitskills.Github.Converter.Settings);
+        public static CommitContributionByRepository FromJson(string json) => JsonConvert.DeserializeObject<CommitContributionByRepository>(json, gitskills.Github.Converter.Settings);
     }
 
     public partial class ContributionsCollection
     {
-        public static ContributionsCollection FromJson(string json) => JsonConvert.DeserializeObject<ContributionsCollection>(json, Gitskills.Github.Converter.Settings);
+        public static ContributionsCollection FromJson(string json) => JsonConvert.DeserializeObject<ContributionsCollection>(json, gitskills.Github.Converter.Settings);
     }
 
     public partial class User
     {
-        public static User FromJson(string json) => JsonConvert.DeserializeObject<User>(json, Gitskills.Github.Converter.Settings);
+        public static User FromJson(string json) => JsonConvert.DeserializeObject<User>(json, gitskills.Github.Converter.Settings);
     }
 
     public partial class OrganizationMemberConnection
     {
-        public static OrganizationMemberConnection FromJson(string json) => JsonConvert.DeserializeObject<OrganizationMemberConnection>(json, Gitskills.Github.Converter.Settings);
+        public static OrganizationMemberConnection FromJson(string json) => JsonConvert.DeserializeObject<OrganizationMemberConnection>(json, gitskills.Github.Converter.Settings);
     }
 
     public partial class Organization
     {
-        public static Organization FromJson(string json) => JsonConvert.DeserializeObject<Organization>(json, Gitskills.Github.Converter.Settings);
+        public static Organization FromJson(string json) => JsonConvert.DeserializeObject<Organization>(json, gitskills.Github.Converter.Settings);
     }
 
     public partial class GetOrgQuery
     {
-        public static GetOrgQuery FromJson(string json) => JsonConvert.DeserializeObject<GetOrgQuery>(json, Gitskills.Github.Converter.Settings);
+        public static GetOrgQuery FromJson(string json) => JsonConvert.DeserializeObject<GetOrgQuery>(json, gitskills.Github.Converter.Settings);
     }
 
     public static class Serialize
     {
-        public static string ToJson(this Language self) => JsonConvert.SerializeObject(self, Gitskills.Github.Converter.Settings);
-        public static string ToJson(this LanguageConnection self) => JsonConvert.SerializeObject(self, Gitskills.Github.Converter.Settings);
-        public static string ToJson(this Topic self) => JsonConvert.SerializeObject(self, Gitskills.Github.Converter.Settings);
-        public static string ToJson(this RepositoryTopic self) => JsonConvert.SerializeObject(self, Gitskills.Github.Converter.Settings);
-        public static string ToJson(this RepositoryTopicConnection self) => JsonConvert.SerializeObject(self, Gitskills.Github.Converter.Settings);
-        public static string ToJson(this Repository self) => JsonConvert.SerializeObject(self, Gitskills.Github.Converter.Settings);
-        public static string ToJson(this CreatedContributionCommitConnection self) => JsonConvert.SerializeObject(self, Gitskills.Github.Converter.Settings);
-        public static string ToJson(this CommitContributionByRepository self) => JsonConvert.SerializeObject(self, Gitskills.Github.Converter.Settings);
-        public static string ToJson(this ContributionsCollection self) => JsonConvert.SerializeObject(self, Gitskills.Github.Converter.Settings);
-        public static string ToJson(this User self) => JsonConvert.SerializeObject(self, Gitskills.Github.Converter.Settings);
-        public static string ToJson(this OrganizationMemberConnection self) => JsonConvert.SerializeObject(self, Gitskills.Github.Converter.Settings);
-        public static string ToJson(this Organization self) => JsonConvert.SerializeObject(self, Gitskills.Github.Converter.Settings);
-        public static string ToJson(this GetOrgQuery self) => JsonConvert.SerializeObject(self, Gitskills.Github.Converter.Settings);
+        public static string ToJson(this Language self) => JsonConvert.SerializeObject(self, gitskills.Github.Converter.Settings);
+        public static string ToJson(this LanguageConnection self) => JsonConvert.SerializeObject(self, gitskills.Github.Converter.Settings);
+        public static string ToJson(this Topic self) => JsonConvert.SerializeObject(self, gitskills.Github.Converter.Settings);
+        public static string ToJson(this RepositoryTopic self) => JsonConvert.SerializeObject(self, gitskills.Github.Converter.Settings);
+        public static string ToJson(this RepositoryTopicConnection self) => JsonConvert.SerializeObject(self, gitskills.Github.Converter.Settings);
+        public static string ToJson(this Repository self) => JsonConvert.SerializeObject(self, gitskills.Github.Converter.Settings);
+        public static string ToJson(this CreatedContributionCommitConnection self) => JsonConvert.SerializeObject(self, gitskills.Github.Converter.Settings);
+        public static string ToJson(this CommitContributionByRepository self) => JsonConvert.SerializeObject(self, gitskills.Github.Converter.Settings);
+        public static string ToJson(this ContributionsCollection self) => JsonConvert.SerializeObject(self, gitskills.Github.Converter.Settings);
+        public static string ToJson(this User self) => JsonConvert.SerializeObject(self, gitskills.Github.Converter.Settings);
+        public static string ToJson(this OrganizationMemberConnection self) => JsonConvert.SerializeObject(self, gitskills.Github.Converter.Settings);
+        public static string ToJson(this Organization self) => JsonConvert.SerializeObject(self, gitskills.Github.Converter.Settings);
+        public static string ToJson(this GetOrgQuery self) => JsonConvert.SerializeObject(self, gitskills.Github.Converter.Settings);
     }
 
     internal static class Converter
