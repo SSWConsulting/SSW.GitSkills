@@ -3,6 +3,9 @@ using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using gitskills.Models;
+using System.Linq;
 
 namespace gitskills.Github
 {
@@ -11,6 +14,13 @@ namespace gitskills.Github
         private GraphQLHttpClient _graphQlClient { get; set; }
 
         public static bool isLoading { get; set; } = false;
+
+        public List<string> Languages { get; set; } = new List<string>();
+        public List<string> Topics { get; set; } = new List<string>();
+
+        public List<string> UserNameList {get;set;} = new List<string>();
+
+        public List<OrgMember> Users { get; set; } = new List<OrgMember>();
 
         public GithubService(string token)
         {
@@ -28,7 +38,69 @@ namespace gitskills.Github
           
           var graphQlResponse = await _graphQlClient.SendQueryAsync<GetOrgQuery>(orgRequest);
 
-          return graphQlResponse.Data.Organization;
+          var org = graphQlResponse.Data.Organization;
+          SeedLanguages(org);
+
+          return org;
+        }
+
+        private void SeedLanguages(Organization organization)
+        {
+          var userList = organization.MembersWithRole.Nodes;
+
+          userList.ForEach(u => u.ContributionsCollection.CommitContributionsByRepository.ForEach(r => {
+            var user = new OrgMember();
+            user.Name = u.Name;
+
+            UserNameList.Add(user.Name);
+
+            r.Repository.Languages.Nodes.ForEach(l => {
+              if(!Languages.Contains(l.Name))
+                Languages.Add(l.Name);
+
+              var skill = user.Skills.Where(s => s.Tech == l.Name).FirstOrDefault();
+              
+              var count = (int)r.Contributions.TotalCount;
+              
+              if(skill != null)
+              {
+                skill.CommitCount += count;
+              }
+              else
+              {
+                user.Skills.Add(new Skill
+                {
+                  Tech = l.Name,
+                  CommitCount = count
+                });
+              }
+            });
+            
+            r.Repository.RepositoryTopics.Nodes.ForEach(t => {
+              if(!Topics.Contains(t.Topic.Name))
+                Topics.Add(t.Topic.Name);
+              var skill = user.Skills.Where(s => s.Tech == t.Topic.Name).FirstOrDefault();
+              var count = (int)r.Contributions.TotalCount;
+              if(skill != null)
+              {
+                skill.CommitCount += count;
+              }
+              else
+              {
+                user.Skills.Add(new Skill
+                {
+                  Tech = t.Topic.Name,
+                  CommitCount = count
+                });
+              }
+            });
+
+            Users.Add(user);
+
+          }));
+
+          Languages.Sort();
+          Topics.Sort();
         }
 
         private GraphQLRequest orgRequest = new GraphQLRequest

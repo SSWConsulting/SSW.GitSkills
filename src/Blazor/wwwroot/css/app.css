@@ -29,6 +29,10 @@ app {
     margin-right: 30px;
 }
 
+.topic-badge {
+    margin: 5px;
+}
+
 .top-row {
     height: 3.5rem;
     display: flex;

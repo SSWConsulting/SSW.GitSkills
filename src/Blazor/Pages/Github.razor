@@ -1,6 +1,8 @@
 ﻿@using gitskills.Models
 @inject StateContainer StateContainer
+@inject GithubService githubService
 @implements IDisposable
+@using System.Collections.ObjectModel
 
 @page "/github"
 
@@ -15,6 +17,51 @@ else
     if (!isError)
     {
         <p><strong>Org name: </strong>@name</p>
+        <p>Found Languages:</p>
+        <p>
+            @foreach (var lang in Languages)
+            {
+                <Badge Color="Color.Primary" class="topic-badge">@lang</Badge>
+            }
+        </p>
+        <p>Found topics:</p>
+        <p>
+            @foreach (var topic in Topics)
+            {
+                <Badge Color="Color.Primary" class="topic-badge">@topic</Badge>
+            }
+        </p>
+
+        <p>
+            Angular Users:
+            <br>
+            @angularUsers
+        </p>
+
+        <p>
+            Labels:<br>
+            @foreach (var label in Labels)
+            {
+                @label
+            }
+        </p>
+        <p>
+            Skill count:
+            <br>
+            @foreach (var sk in skillCount)
+            {
+                @sk
+            }
+        </p>
+
+        <p>Users:
+            <br>
+            @foreach (var user in githubService.UserNameList)
+            {
+                @user
+            }
+        </p>
+        <Chart Type="ChartType.Pie" TItem="int" ref="@angularData"/>
     }
 }
 
@@ -28,15 +75,25 @@ else
 
 @code {
 
-    private GithubService githubService;
-
     private bool isError { get; set; } = false;
     private string errorMessage = "";
     string name = "";
 
+    public ObservableCollection<string> Languages { get; set; } = new ObservableCollection<string>();
+    public ObservableCollection<string> Topics { get; set; } = new ObservableCollection<string>();
+
     public string LoadingMessage { get; set; } = "Loading organization information from GitHub...";
 
     string stacktrace = "";
+
+    public PieChart<int> angularData = new PieChart<int>();
+
+    public string[] Labels = {};
+
+    public List<int> skillCount = new List<int>();
+
+    public int angularUsers { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -46,13 +103,24 @@ else
 
         try
         {
-            githubService = new GithubService("005748d0ebf8d93fda5d4b36fab73f48fa4b5207");
-
+            // TODO: get this from the user and store in local storage
             var result = await githubService.GetOrgQuery("sswconsulting");
 
             StateContainer.SetLoading(false);
 
+            foreach(var lang in githubService.Languages)
+            {
+                Languages.Add(lang);
+            }
+
+            foreach(var topic in githubService.Topics)
+            {
+                Topics.Add(topic);
+            }
+
             name = result.Name;
+
+            await HandleRedraw();
         }
         catch (Exception ex)
         {
@@ -63,9 +131,43 @@ else
         }
     }
 
-    private async Task Init()
+    @* protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        
+        if(firstRender)
+        {
+            await HandleRedraw();
+        }
+    } *@
+
+    async Task HandleRedraw()
+    {
+        await angularData.Clear();
+
+        var userList = githubService.Users
+            .Where(u => u.Skills.Where(s => s.Tech == "angular").Any())
+            .ToList();
+
+        angularUsers = githubService.Users.Count;//userList.Count;
+
+        userList.ForEach(u => 
+        {
+            Labels.Append(u.Name);
+            var skill = u.Skills.Where(s => s.Tech == "angular").First();
+            skillCount.Add(skill.CommitCount);
+        });
+
+        List<string> backgroundColors = new List<string> { ChartColor.FromRgba( 255, 99, 132, 0.2f ), ChartColor.FromRgba( 54, 162, 235, 0.2f ), ChartColor.FromRgba( 255, 206, 86, 0.2f ), ChartColor.FromRgba( 75, 192, 192, 0.2f ), ChartColor.FromRgba( 153, 102, 255, 0.2f ), ChartColor.FromRgba( 255, 159, 64, 0.2f ) };
+        List<string> borderColors = new List<string> { ChartColor.FromRgba( 255, 99, 132, 1f ), ChartColor.FromRgba( 54, 162, 235, 1f ), ChartColor.FromRgba( 255, 206, 86, 1f ), ChartColor.FromRgba( 75, 192, 192, 1f ), ChartColor.FromRgba( 153, 102, 255, 1f ), ChartColor.FromRgba( 255, 159, 64, 1f ) };
+
+        PieChartDataset<int> angularSkillCount = new PieChartDataset<int>
+        {
+            Label = "Users with Angular commits",
+            Data = skillCount,
+            BackgroundColor = backgroundColors,
+            BorderColor = borderColors
+        };
+
+        await angularData.AddLabelsDatasetsAndUpdate(Labels , angularSkillCount);
     }
 
     public void Dispose()
