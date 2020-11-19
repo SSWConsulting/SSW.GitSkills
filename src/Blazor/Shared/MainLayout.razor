@@ -1,15 +1,28 @@
-﻿@inherits LayoutComponentBase
+﻿@using gitskills.Models
+@inject StateContainer StateContainer
+@inherits LayoutComponentBase
+@implements IDisposable
 
-<div class="sidebar">
-    <NavMenu />
-</div>
+<Layout Loading="@StateContainer.isLoading">
+    <LayoutHeader>
+        <NavMenu />
+    </LayoutHeader>
+    <LayoutContent>
+        <div class="content app-content">
+            @Body
+        </div>
+    </LayoutContent>
+</Layout>
 
-<div class="main">
-    <div class="top-row px-4">
-        <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
-    </div>
+@code {
+    protected override void OnInitialized()
+    {
+        StateContainer.OnChange += StateHasChanged;
+    }
 
-    <div class="content px-4">
-        @Body
-    </div>
-</div>
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
+
+}

@@ -10,6 +10,8 @@ namespace gitskills.Github
     {
         private GraphQLHttpClient _graphQlClient { get; set; }
 
+        public static bool isLoading { get; set; } = false;
+
         public GithubService(string token)
         {
             _graphQlClient = new GraphQLHttpClient("https://api.github.com/graphql", new NewtonsoftJsonSerializer());

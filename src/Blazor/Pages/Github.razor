@@ -1,10 +1,14 @@
-﻿@page "/github"
+﻿@using gitskills.Models
+@inject StateContainer StateContainer
+@implements IDisposable
 
-<h3>Github Queries</h3>
+@page "/github"
 
-@if (isLoading)
+<h3>Organization Info</h3>
+
+@if (StateContainer.isLoading)
 {
-    <p><em>Loading...</em></p>
+    <p><em>@LoadingMessage</em></p>
 }
 else
 {
@@ -22,40 +26,50 @@ else
     <p>@stacktrace</p>
 }
 
-
 @code {
 
     private GithubService githubService;
 
-    private bool isError { get; set; }
+    private bool isError { get; set; } = false;
     private string errorMessage = "";
-    private bool isLoading { get; set; }
     string name = "";
+
+    public string LoadingMessage { get; set; } = "Loading organization information from GitHub...";
 
     string stacktrace = "";
 
     protected override async Task OnInitializedAsync()
     {
+        StateContainer.OnChange += StateHasChanged;
 
-        isLoading = true;
-        isError = false;
+        StateContainer.SetLoading(true);
 
         try
         {
             githubService = new GithubService("005748d0ebf8d93fda5d4b36fab73f48fa4b5207");
 
-            isLoading = false;
-
             var result = await githubService.GetOrgQuery("sswconsulting");
+
+            StateContainer.SetLoading(false);
 
             name = result.Name;
         }
         catch (Exception ex)
         {
-            isLoading = false;
+            StateContainer.SetLoading(false);
             isError = true;
             errorMessage = ex.Message;
             stacktrace = ex.StackTrace;
         }
+    }
+
+    private async Task Init()
+    {
+        
+    }
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
     }
 }

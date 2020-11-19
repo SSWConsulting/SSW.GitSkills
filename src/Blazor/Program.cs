@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Blazorise;
+using Blazorise.Material;
+using Blazorise.Icons.Material;
+using gitskills.Models;
 
 namespace gitskills
 {
@@ -17,9 +21,24 @@ namespace gitskills
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
 
+            builder.Services.AddBlazorise(options =>
+            {
+                options.ChangeTextOnKeyPress = true;
+            })
+            .AddMaterialProviders()
+            .AddMaterialIcons();
+
+            builder.Services.AddSingleton<StateContainer>();
+
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-            await builder.Build().RunAsync();
+            var host = builder.Build();
+
+            host.Services
+                .UseMaterialProviders()
+                .UseMaterialIcons();
+
+            await host.RunAsync();
         }
     }
 }

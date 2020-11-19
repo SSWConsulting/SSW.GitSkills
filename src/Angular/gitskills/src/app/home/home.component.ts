@@ -71,8 +71,13 @@ export class HomeComponent implements OnInit {
       this.repos = result.data && result.data;
       this.orgName = result.data.name;
 
+      var org = result.data;
+
+      console.log('Org',org?.name);
+
       this.loading = result.loading;
       this.gotError = false;
+
     },
     (err) => {
       this.handleError(err);
