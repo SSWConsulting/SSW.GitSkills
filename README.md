@@ -36,4 +36,8 @@ There are a number of limitations with this approach, and unless these can be re
 You can check out a working version of the prototype [here!](https://gitskills.z8.web.core.windows.net/github)    
 Go to the link and explore the skills available (Languages and Topics). Click on one to see a breakdown of the commits by SSW developers.    
     
-The GitHub GraphQL endpoint may return a 502 Bad Gateway - this is common, if it happens just refresh the page.
+**NOTE: The GitHub GraphQL endpoint may return a 502 Bad Gateway - this is common, if it happens just refresh the page.**
+
+<img scr="./Assets/v05screenshot.png">
+
+**Figure: Screenshot of the GitSkills demo**
