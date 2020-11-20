@@ -24,12 +24,14 @@ jobs:
           dotnet-version: 3.1.201
 
       - name: Build with dotnet
-        path: src/
         run: dotnet build --configuration Release
+        with:
+          path: src/
     
       - name: Publish with dotnet
-        path: src/
-        run: dotnet publish --configuration Release 
+        run: dotnet publish --configuration Release
+        with:
+          path: src/
     
       - name: Publish artifacts
         uses: actions/upload-artifact@main
