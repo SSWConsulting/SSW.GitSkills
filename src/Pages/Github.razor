@@ -54,23 +54,12 @@ else
             </Collapse>
         </Accordion>
 
-        @* <TextEdit @bind-Text="@selectedSkill" Placeholder="Enter a skill from the lists above..."></TextEdit> *@
-
-        @* <Button Clicked="@SeedValues">Send to Chart</Button> *@
-
         <p><em>Selected skill: </em>@selectedSkill</p>
 
         <Piechart @bind-Labels="Labels" @bind-Values="skillCount" @ref="skillsChart"></Piechart>
     }
 }
 
-@* @if (isError)
-{
-    <p><strong>Error</strong></p>
-    <p>@errorMessage</p>
-    <p>Stack trace:</p>
-    <p>@stacktrace</p>
-} *@
 
 <Snackbar @ref="snackbarError" Color="SnackbarColor.Danger">
     <SnackbarBody>

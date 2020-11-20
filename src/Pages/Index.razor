@@ -1,26 +1,98 @@
 ﻿@using gitskills.Components
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager navigationManager
+
 @page "/"
 
-<h1>Hello, world!</h1>
+<Container>
+    <DisplayHeading Size="DisplayHeadingSize.Is1">SSW.GitSkills</DisplayHeading>
 
-Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    Welcome to SSW GitSkills
 
-<Button Color="Color.Primary">Primary</Button>
-<Button Color="Color.Secondary">Secondary</Button>
-<Button Color="Color.Success">Success</Button>
-<Button Color="Color.Warning">Warning</Button>
-<Button Color="Color.Danger">Danger</Button>
-<Button Color="Color.Info">Info</Button>
-<Button Color="Color.Light">Light</Button>
-<Button Color="Color.Dark">Dark</Button>
-<Button>None</Button>
+    @if(ButtonDisabled)
+    {
+        <p>
+            Looks like you haven't added and API access token for GitHub. You can get one <a href="https://github.com/settings/tokens">here.</a>
+        </p>
+        <p>
+            You will need to select the following scopes:
+            <ul>
+                <li>
+                    repo:status
+                </li>
+                <li>
+                    read:org
+                </li>
+                <li>
+                    read:user
+                </li>
+                <li>
+                    read:repo_hook
+                </li>
+                <li>
+                    read:discussion
+                </li>
+                <li>
+                    read:enterprise
+                </li>
+            </ul>
+        </p>
+        <p>
+            Once you have your token add it here:
+        </p>
+        <p>
+            <TextEdit @bind-text="@Token" Placeholder="Paste your token here..."/>
+            <Button Color="Color.Secondary" Clicked="@(()=>SetToken())">Save</Button>
+        </p>
+    }
 
-<Piechart Labels="@labels" Values="@values"></Piechart>
+    <p>
+        Click the Skills button to go to the GitHub Skills chart page.
+    </p>
+    <Button @bind-Disabled="ButtonDisabled" Color="Color.Primary" Clicked="@(() => GoToGithub())">Skills</Button>
+    @if(ButtonDisabled)
+    {
+        <span style="margin-left: 5px; color:grey;"> (Disabled until token provided)</span>
+    }
 
-@code{
-    List<string> labels = new List<string>{"test","test2","test3"};
+</Container>
 
-    List<int>values = new List<int>{5,16,4};
+<Snackbar @ref="savedSnackbar" Color="SnackbarColor.Success">
+    <SnackbarBody>
+        Token Saved
+    </SnackbarBody>
+</Snackbar>
+
+@code
+{      
+    public bool ButtonDisabled { get; set; } = true;
+
+    public string Token { get; set; }
+
+    Snackbar savedSnackbar;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = await localStorage.GetItemAsync<string>("Token");
+
+        if(!string.IsNullOrWhiteSpace(token))
+        {
+            ButtonDisabled = false;
+        }
+    }
+
+    void GoToGithub()
+    {
+        navigationManager.NavigateTo("github");
+    }
+
+    private async Task SetToken()
+    {
+        await localStorage.SetItemAsync<string>("Token", Token);
+
+        ButtonDisabled = false;
+
+        savedSnackbar.Show();
+    }
 }

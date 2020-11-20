@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using gitskills.Models;
 using System.Linq;
+using Blazored.LocalStorage;
 
 namespace gitskills.Github
 {
@@ -20,11 +21,22 @@ namespace gitskills.Github
 
         public List<OrgMember> Users { get; set; } = new List<OrgMember>();
 
-        public GithubService(string token)
+        private ILocalStorageService _localStorage;
+
+        public GithubService(ILocalStorageService localStorageService)
         {
             _graphQlClient = new GraphQLHttpClient("https://api.github.com/graphql", new NewtonsoftJsonSerializer());
 
-            _graphQlClient.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            _localStorage = localStorageService;
+
+            _ = Init();
+        }
+
+        private async Task Init()
+        {
+            var token = await _localStorage.GetItemAsync<string>("Token");
+
+            _graphQlClient.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "005748d0ebf8d93fda5d4b36fab73f48fa4b5207");
         }
 
         public async Task<Organization> GetOrgQuery(string OrganizationName)

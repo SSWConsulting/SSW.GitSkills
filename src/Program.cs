@@ -12,6 +12,7 @@ using Blazorise.Material;
 using Blazorise.Icons.Material;
 using gitskills.Models;
 using gitskills.Github;
+using Blazored.LocalStorage;
 
 namespace gitskills
 {
@@ -31,8 +32,10 @@ namespace gitskills
 
             builder.Services.AddSingleton<StateContainer>();
 
+            builder.Services.AddBlazoredLocalStorage();
+
             // TODO: get the token from the user and store in local storage
-            builder.Services.AddSingleton<GithubService>(g => new GithubService("005748d0ebf8d93fda5d4b36fab73f48fa4b5207"));
+            builder.Services.AddScoped<GithubService>();
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
