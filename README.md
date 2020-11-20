@@ -33,7 +33,7 @@ There are a number of limitations with this approach, and unless these can be re
 
 ## Demo
 
-You can check out a working version of the prototype [here!](https://gitskills.z8.web.core.windows.net/github)    
+You can check out a working version of the prototype [here!](https://gitskills.z8.web.core.windows.net/)    
 Go to the link and explore the skills available (Languages and Topics). Click on one to see a breakdown of the commits by SSW developers.    
 
 You will need a Personal Access Token to access the GitHub API. You can get one from developer settings here: https://github.com/settings/tokens.    
