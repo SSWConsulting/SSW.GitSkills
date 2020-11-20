@@ -23,7 +23,7 @@ There are a number of limitations with this approach, and unless these can be re
 * High dependence on users accurately tagging their repos with relevant topics
 * Sensitive to user commit habits (i.e. will favour User A if User A habitually commits code more frequently than User B)
 * Doesn't enumerate repos stored elsewhere (e.g. Azure DevOps, clients' repos, etc.)
-* Language detection is poor (e.g., GitHub will detect JavaScript, TypeScript and Vue as languages, but won't detect Angular or React)
+* Language detection is inconsistent (e.g., GitHub will detect JavaScript, TypeScript and Vue as languages, but won't detect Angular or React)
 
 ## Todo
 - [ ] Add more chart types
