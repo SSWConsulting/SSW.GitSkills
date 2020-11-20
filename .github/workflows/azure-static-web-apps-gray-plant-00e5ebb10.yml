@@ -19,20 +19,20 @@ jobs:
         with:
           submodules: true
       - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.201
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.201
 
-    - name: Build with dotnet
-      run: dotnet build --configuration Release
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
     
-    - name: Publish with dotnet
-      run: dotnet publish --configuration Release 
+      - name: Publish with dotnet
+        run: dotnet publish --configuration Release 
     
-    - name: Publish artifacts
-      uses: actions/upload-artifact@master
-      with:
-        name: webapp
+      - name: Publish artifacts
+        uses: actions/upload-artifact@master
+        with:
+      - name: webapp
         path: src/frontend/bin/Release/netstandard2.1/publish/wwwroot
       - name: Build And Deploy
         id: builddeploy
