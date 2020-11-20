@@ -30,10 +30,10 @@ jobs:
         run: dotnet publish --configuration Release 
     
       - name: Publish artifacts
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@main
         with:
           name: webapp
-          path: src/frontend/bin/Release/netstandard2.1/publish/wwwroot
+          path: src/bin/Release/netstandard2.1/publish/wwwroot
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v0.0.1-preview
