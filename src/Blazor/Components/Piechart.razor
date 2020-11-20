@@ -1,4 +1,4 @@
-<Button Clicked="@(async () => await HandleRedraw())">Redraw</Button>
+@* <Button Clicked="@(async () => await HandleRedraw())">Redraw</Button> *@
 
 <PieChart @ref="pieChart" TItem="int" />
 
@@ -6,10 +6,30 @@
     PieChart<int> pieChart;
     
     [Parameter]
-    public List<string> Labels { get; set; } = new List<string>();
+    public List<string> Labels { get; set; }
+
+    [Parameter]
+    public EventCallback<List<string>> LabelsChanged { get; set; }
+
+    private async Task OnLabelsChanged(ChangeEventArgs e)
+    {
+        var theList = e.Value as List<string>;
+        Labels = theList;
+        await LabelsChanged.InvokeAsync(Labels);
+    }
 
     [Parameter]
     public List<int> Values { get; set; } = new List<int>();
+    
+    [Parameter]
+    public EventCallback<List<int>> ValuesChanged { get; set; }
+    
+    private async Task OnValuesChanged(ChangeEventArgs e)
+    {
+        var theList = e.Value as List<int>;
+        Values = theList;
+        await ValuesChanged.InvokeAsync(Values);
+    }
 
     List<string> borderColors { get; set; }
     List<string> backgroundColors { get; set; }
@@ -22,7 +42,7 @@
         }
     }
 
-    async Task HandleRedraw()
+    public async Task HandleRedraw()
     {
         SeedChartColors();
 

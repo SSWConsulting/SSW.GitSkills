@@ -33,6 +33,11 @@ app {
     margin: 5px;
 }
 
+.badge-container {
+    display:flex;
+    justify-content: space-between;
+}
+
 .top-row {
     height: 3.5rem;
     display: flex;

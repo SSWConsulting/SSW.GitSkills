@@ -18,7 +18,7 @@ else
     if (!isError)
     {
         <p><strong>Org name: </strong>@name</p>
-        
+
         <Accordion>
             <Collapse Visible="@languagesVisible">
                 <CollapseHeader>
@@ -26,11 +26,14 @@ else
                         <Button Clicked="@(()=> languagesVisible = !languagesVisible)">Languages</Button>
                     </Heading>
                 </CollapseHeader>
-                <CollapseBody>
+                <CollapseBody class="badge-container">
+                <div class="badge-container">
                     @foreach (var lang in Languages)
                     {
-                        <Badge Color="Color.Primary" class="topic-badge">@lang</Badge>
+                        <Button Color="Color.Primary" Clicked="@(() => UpdateChart(@lang))" style="margin: 5px;">@lang</Button>
+                        @Environment.NewLine;
                     }
+                </div>
                 </CollapseBody>
             </Collapse>
             <Collapse Visible="@topicsVisible">
@@ -39,16 +42,25 @@ else
                         <Button Clicked="@(()=> topicsVisible = !topicsVisible)">Topics</Button>
                     </Heading>
                 </CollapseHeader>
-                <CollapseBody>
+                <CollapseBody class="badge-container">
+                <div class="badge-container">
                     @foreach (var topic in Topics)
                     {
-                        <Badge Color="Color.Primary" class="topic-badge">@topic</Badge>
+                        <Button Color="Color.Primary" Clicked="@(()=> UpdateChart(@topic))" style="margin: 5px;">@topic</Button>
+                        @Environment.NewLine;
                     }
+                </div>
                 </CollapseBody>
             </Collapse>
         </Accordion>
 
-        <Piechart Labels="@Labels" Values="@skillCount"></Piechart>
+        @* <TextEdit @bind-Text="@selectedSkill" Placeholder="Enter a skill from the lists above..."></TextEdit> *@
+
+        @* <Button Clicked="@SeedValues">Send to Chart</Button> *@
+
+        <p><em>Selected skill: </em>@selectedSkill</p>
+
+        <Piechart @bind-Labels="Labels" @bind-Values="skillCount" @ref="skillsChart"></Piechart>
     }
 }
 
@@ -87,6 +99,10 @@ else
 
     public List<int> skillCount = new List<int>();
     Snackbar snackbarError;
+
+    string selectedSkill;
+
+    Piechart skillsChart;
 
     protected override async Task OnInitializedAsync()
     {
@@ -127,20 +143,30 @@ else
 
     void SeedValues()
     {
+        Labels = new List<string>();
+        skillCount = new List<int>();
+
         var userList = githubService.Users
-            .Where(u => u.Skills.Where(s => s.Tech == "C#").Any())
+            .Where(u => u.Skills.Where(s => s.Tech == selectedSkill).Any())
             .ToList();
 
         userList.ForEach(u => 
         {
             Labels.Add(u.Name);
             int skill = u.Skills
-                .Where(s => s.Tech == "C#")
+                .Where(s => s.Tech == selectedSkill)
                 .Select(s => s.CommitCount)
                 .Sum();
             
             skillCount.Add(skill);
         });
+    }
+
+    async Task UpdateChart(string skill)
+    {
+        selectedSkill = skill;
+        SeedValues();
+        await skillsChart.HandleRedraw();
     }
 
     public void Dispose()
