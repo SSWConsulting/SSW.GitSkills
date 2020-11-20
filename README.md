@@ -2,7 +2,7 @@
 
 # SSW.GitSkills
 
-Welcome to SSW.GitSkills! Thisis an experimental project to enumerate the commits mate by members of the SSW Consulting organization.    
+Welcome to SSW.GitSkills! Thisis an experimental project to enumerate the commits made by members of the SSW Consulting organization.    
 The results are displayed graphically in chart form enabling you to easily visualize which developers have made the most commits relating to a particular skill.    
 
 
