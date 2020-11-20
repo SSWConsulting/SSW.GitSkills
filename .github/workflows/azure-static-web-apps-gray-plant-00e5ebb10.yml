@@ -10,22 +10,23 @@ on:
       - main
 
 jobs:
-  - name: Setup .NET Core
+setup_dotnet_core:  
+    name: Setup .NET Core
     uses: actions/setup-dotnet@v1
     with:
       dotnet-version: 3.1.201
-
-  - name: Build with dotnet
+build_with_dotnet:
+    name: Build with dotnet
     run: dotnet build --configuration Release
-  
-  - name: Publish with dotnet
+publish_with_dotnet:  
+    name: Publish with dotnet
     run: dotnet publish --configuration Release 
-  
-  - name: Publish artifacts
+publish_artifacts: 
+    name: Publish artifacts
     uses: actions/upload-artifact@main
     with:
       name: webapp
-      path: src/frontend/bin/Release/netstandard2.1/publish/wwwroot        
+      path: src/frontend/bin/Release/netstandard2.1/publish/wwwroot 
 build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
@@ -44,7 +45,6 @@ build_and_deploy_job:
           ###### Repository/Build Configurations - These values can be configured to match you app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
           app_location: "src" # App source code path
-          api_location: "api" # Api source code path - optional
           output_location: "wwwroot" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
 
