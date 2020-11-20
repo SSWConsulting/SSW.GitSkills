@@ -38,6 +38,6 @@ Go to the link and explore the skills available (Languages and Topics). Click on
     
 **NOTE: The GitHub GraphQL endpoint may return a 502 Bad Gateway - this is common, if it happens just refresh the page.**
 
-<img scr="https://github.com/SSWConsulting/gitskills/blob/main/Assets/v05screenshot.png" width="700">
+<img scr="https://raw.githubusercontent.com/SSWConsulting/gitskills/main/Assets/v05screenshot.png" width="700">
 
 **Figure: Screenshot of the GitSkills demo**
