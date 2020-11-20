@@ -1,0 +1,28 @@
+﻿@using gitskills.Models
+@inject StateContainer StateContainer
+@inherits LayoutComponentBase
+@implements IDisposable
+
+<Layout Loading="@StateContainer.isLoading">
+    <LayoutHeader>
+        <NavMenu />
+    </LayoutHeader>
+    <LayoutContent>
+        <div class="content app-content">
+            @Body
+        </div>
+    </LayoutContent>
+</Layout>
+
+@code {
+    protected override void OnInitialized()
+    {
+        StateContainer.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
+
+}

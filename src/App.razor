@@ -1,0 +1,29 @@
+<Blazorise.ThemeProvider Theme="@sswtheme">
+    <Router AppAssembly="@typeof(Program).Assembly">
+        <Found Context="routeData">
+            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p>Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</Blazorise.ThemeProvider>
+
+@code {
+    private Theme sswtheme = new Theme
+    {
+        ColorOptions = new ThemeColorOptions
+        {
+            Primary = "#CC4141",
+            Secondary = "#333333"
+        },
+        BackgroundOptions = new ThemeBackgroundOptions
+        {
+            Primary = "#CC4141",
+            Secondary = "#333333"
+        },
+        IsGradient = true
+    };
+}
