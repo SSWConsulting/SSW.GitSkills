@@ -29,7 +29,7 @@ There are a number of limitations with this approach, and unless these can be re
 - [ ] Add more chart types
 - [ ] Allow selecting of multiple skills
 - [ ] Allow navigation by user as well as by skill
-- [ ] (Potentially) Add authentication
+- [x] (Potentially) Add authentication
 
 ## Demo
 
