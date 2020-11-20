@@ -19,7 +19,7 @@ namespace gitskills.Github
         public List<string> Languages { get; set; } = new List<string>();
         public List<string> Topics { get; set; } = new List<string>();
 
-        public string Token {get;set;}
+        private string Token {get;set;}
 
         public List<OrgMember> Users { get; set; } = new List<OrgMember>();
 

@@ -8,8 +8,6 @@
 @page "/github"
 
 <h3>Organization Info</h3>
-<p>Token: @githubService.Token</p>
-
 @if (StateContainer.isLoading)
 {
     <p><em>@LoadingMessage</em></p>
@@ -55,9 +53,10 @@ else
             </Collapse>
         </Accordion>
 
-        <p><em>Selected skill: </em>@selectedSkill</p>
-
-        <Piechart @bind-Labels="Labels" @bind-Values="skillCount" @ref="skillsChart"></Piechart>
+        <p class="skill-title">Selected skill: @selectedSkill</p>
+        <div class="chart-area">
+            <Piechart @bind-Labels="Labels" @bind-Values="skillCount" @ref="skillsChart"></Piechart>
+        </div>
     }
 }
 

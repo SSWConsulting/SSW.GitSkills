@@ -132,6 +132,16 @@ app {
     outline: 1px solid red;
 }
 
+.chart-area {
+    max-height: fit-content;
+    margin: auto;
+}
+
+.skill-title {
+    text-align: center;
+    text-emphasis: bold;
+}
+
 .validation-message {
     color: red;
 }
