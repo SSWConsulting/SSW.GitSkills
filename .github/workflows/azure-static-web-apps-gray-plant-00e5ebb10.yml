@@ -9,36 +9,35 @@ on:
     branches:
       - main
 
-jobs:
-setup_dotnet_core:  
-    name: Setup .NET Core
-    uses: actions/setup-dotnet@v1
-    with:
-      dotnet-version: 3.1.201
-build_with_dotnet:
-    name: Build with dotnet
-    run: dotnet build --configuration Release
-publish_with_dotnet:  
-    name: Publish with dotnet
-    run: dotnet publish --configuration Release 
-publish_artifacts: 
-    name: Publish artifacts
-    uses: actions/upload-artifact@main
-    with:
-      name: webapp
-      path: src/frontend/bin/Release/netstandard2.1/publish/wwwroot 
+jobs: 
 build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.201
+
+    - name: Build with dotnet
+      run: dotnet build --configuration Release
+    
+    - name: Publish with dotnet
+      run: dotnet publish --configuration Release 
+    
+    - name: Publish artifacts
+      uses: actions/upload-artifact@master
+      with:
+        name: webapp
+        path: src/frontend/bin/Release/netstandard2.1/publish/wwwroot
+        uses: actions/checkout@v2
         with:
           submodules: true
-      - name: Build And Deploy
-        id: builddeploy
-        uses: Azure/static-web-apps-deploy@v0.0.1-preview
-        with:
+    - name: Build And Deploy
+    id: builddeploy
+    uses: Azure/static-web-apps-deploy@v0.0.1-preview
+    with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_GRAY_PLANT_00E5EBB10 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
