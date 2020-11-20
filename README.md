@@ -35,7 +35,17 @@ There are a number of limitations with this approach, and unless these can be re
 
 You can check out a working version of the prototype [here!](https://gitskills.z8.web.core.windows.net/github)    
 Go to the link and explore the skills available (Languages and Topics). Click on one to see a breakdown of the commits by SSW developers.    
-    
+
+You will need a Personal Access Token to access the GitHub API. You can get one from developer settings here: https://github.com/settings/tokens.    
+
+When creating your token make sure you add the following scopes:
+* repo:status
+* read:org
+* read:user
+* read:repo_hook
+* read:discussion
+* read:enterprise
+
 **NOTE: The GitHub GraphQL endpoint may return a 502 Bad Gateway - this is common, if it happens just refresh the page.**
 
 <img scr="https://raw.githubusercontent.com/SSWConsulting/gitskills/main/Assets/v05screenshot.png" width="700">
