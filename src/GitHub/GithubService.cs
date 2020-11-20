@@ -19,24 +19,26 @@ namespace gitskills.Github
         public List<string> Languages { get; set; } = new List<string>();
         public List<string> Topics { get; set; } = new List<string>();
 
+        public string Token {get;set;}
+
         public List<OrgMember> Users { get; set; } = new List<OrgMember>();
 
-        private ILocalStorageService _localStorage;
+        private ISyncLocalStorageService _localStorage;
 
-        public GithubService(ILocalStorageService localStorageService)
+        public GithubService(ISyncLocalStorageService localStorageService)
         {
             _graphQlClient = new GraphQLHttpClient("https://api.github.com/graphql", new NewtonsoftJsonSerializer());
 
             _localStorage = localStorageService;
 
-            _ = Init();
-        }
+            Token = _localStorage.GetItem<string>("Token");
 
-        private async Task Init()
-        {
-            var token = await _localStorage.GetItemAsync<string>("Token");
+            if(string.IsNullOrWhiteSpace(Token))
+            {
+              throw new System.Exception("GitHub auth token not found");
+            }
 
-            _graphQlClient.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "005748d0ebf8d93fda5d4b36fab73f48fa4b5207");
+            _graphQlClient.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
         }
 
         public async Task<Organization> GetOrgQuery(string OrganizationName)

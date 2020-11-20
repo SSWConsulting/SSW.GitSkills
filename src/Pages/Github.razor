@@ -8,6 +8,7 @@
 @page "/github"
 
 <h3>Organization Info</h3>
+<p>Token: @githubService.Token</p>
 
 @if (StateContainer.isLoading)
 {
@@ -101,7 +102,7 @@ else
 
         try
         {
-            // TODO: get this from the user and store in local storage
+            // TODO: get organization from configuration or from the user and store in local storage
             var result = await githubService.GetOrgQuery("sswconsulting");
 
             StateContainer.SetLoading(false);
