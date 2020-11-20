@@ -48,6 +48,6 @@ When creating your token make sure you add the following scopes:
 
 **NOTE: The GitHub GraphQL endpoint may return a 502 Bad Gateway - this is common, if it happens just refresh the page.**
 
-<img scr="https://github.com/SSWConsulting/gitskills/blob/main/Assets/v05screenshot.png" width="700">
+<img src="https://github.com/SSWConsulting/gitskills/blob/main/Assets/v05screenshot.png" width="700">
 
 **Figure: Screenshot of the GitSkills demo**
