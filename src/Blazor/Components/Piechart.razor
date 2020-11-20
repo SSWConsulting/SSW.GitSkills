@@ -42,7 +42,15 @@
         }
     }
 
-    public async Task HandleRedraw()
+    public async Task RedrawChart()
+    {
+        await HandleRedraw();
+        if(borderColors.Count < Labels.Count)
+        {
+            await HandleRedraw();
+        }
+    }
+    async Task HandleRedraw()
     {
         SeedChartColors();
 

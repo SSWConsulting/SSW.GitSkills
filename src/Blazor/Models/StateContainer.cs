@@ -6,13 +6,13 @@ namespace gitskills.Models
     {
         public bool isLoading { get; set; } = false;
 
-        public string Property { get; set; } = "Initial value from StateContainer";
+        public string Token { get; set; }
 
         public event Action OnChange;
 
-        public void SetProperty(string value)
+        public void SetToken(string value)
         {
-            Property = value;
+            Token = value;
             NotifyStateChanged();
         }
 
