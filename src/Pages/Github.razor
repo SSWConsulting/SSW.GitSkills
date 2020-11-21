@@ -56,6 +56,7 @@ else
         <p class="skill-title">Selected skill: @selectedSkill</p>
         <div class="chart-area">
             <Piechart @bind-Labels="Labels" @bind-Values="skillCount" @ref="skillsChart"></Piechart>
+            <Barchart @bind-Labels="Labels" @bind-Values="skillCount" @ref="skillBarChart"></Barchart>
         </div>
     }
 }
@@ -92,6 +93,7 @@ else
     string selectedSkill;
 
     Piechart skillsChart;
+    Barchart skillBarChart;
 
     protected override async Task OnInitializedAsync()
     {
@@ -156,6 +158,7 @@ else
         selectedSkill = skill;
         SeedValues();
         await skillsChart.RedrawChart();
+        await skillBarChart.RedrawChart();
     }
 
     public void Dispose()

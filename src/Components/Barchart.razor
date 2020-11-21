@@ -1,9 +1,7 @@
-@* <Button Clicked="@(async () => await HandleRedraw())">Redraw</Button> *@
-
-<PieChart @ref="pieChart" TItem="int" />
+<BarChart @ref="barChart" TItem="int" />
 
 @code{
-    PieChart<int> pieChart;
+    BarChart<int> barChart;
     
     [Parameter]
     public List<string> Labels { get; set; }
@@ -54,20 +52,22 @@
     {
         SeedChartColors();
 
-        await pieChart.Clear();
+        await barChart.Clear();
 
-        await pieChart.AddLabelsDatasetsAndUpdate( GetChartLabels(), GetPieChartDataset() );
+        await barChart.AddLabelsDatasetsAndUpdate( GetChartLabels(), GetBarChartDataset() );        
     }
 
-    PieChartDataset<int> GetPieChartDataset()
+    BarChartDataset<int> GetBarChartDataset()
     {
-        return new PieChartDataset<int>
+        var ds =  new BarChartDataset<int>
         {
             Label = "# of commits",
             Data = GetChartData(),
             BackgroundColor = backgroundColors,
             BorderColor = borderColors
         };
+        
+        return ds;
     }
 
     string[] chartLabels = { "Red", "Blue", "Yellow", "Green", "Purple", "Orange" };
