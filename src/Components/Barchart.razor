@@ -3,7 +3,7 @@
 @code{
     BarChart<int> barChart;
 
-        private List<BarChartDataset<int>> datasets;
+    private List<BarChartDataset<int>> datasets;
     
     [Parameter]
     public List<string> Labels { get; set; }
@@ -18,7 +18,7 @@
         await LabelsChanged.InvokeAsync(Labels);
     }
 
-    [Parameter]
+    /* [Parameter]
     public List<int> Values { get; set; } = new List<int>();
     
     [Parameter]
@@ -29,7 +29,7 @@
         var theList = e.Value as List<int>;
         Values = theList;
         await ValuesChanged.InvokeAsync(Values);
-    }
+    } */
 
     public void AddSeries (string Label, List<int> Values)
     {
@@ -44,57 +44,29 @@
         };
 
         datasets.Add(ds);
-        barChart.AddDataSet(ds);
+        //barChart.AddDataSet(ds);
+        HandleRedraw();
     }
 
     List<string> borderColors { get; set; }
     List<string> backgroundColors { get; set; }
 
-    protected override async Task OnAfterRenderAsync( bool firstRender )
-    {
-        if ( firstRender )
-        {
-            await HandleRedraw();
-        }
-    }
-
     public async Task RedrawChart()
     {
         await HandleRedraw();
-        if(borderColors.Count < Labels.Count)
-        {
-            await HandleRedraw();
-        }
     }
+
     async Task HandleRedraw()
     {
-        SeedChartColors(Labels.Count);
-
         await barChart.Clear();
 
-        await barChart.AddLabelsDatasetsAndUpdate( GetChartLabels(), GetBarChartDataset() );        
+        await barChart.AddLabelsDatasetsAndUpdate( GetChartLabels(), datasets );        
     }
 
-    BarChartDataset<int> GetBarChartDataset()
-    {
-        var ds =  new BarChartDataset<int>
-        {
-            Label = "# of commits",
-            Data = GetChartData(),
-            BackgroundColor = backgroundColors,
-            BorderColor = borderColors,
-            
-        };
-        
-        return ds;
-    }
-
-    string[] chartLabels = { "Red", "Blue", "Yellow", "Green", "Purple", "Orange" };
-
-    List<int> GetChartData()
+    /*List<int> GetChartData()
     {
         return Values;
-    }
+    }*/
 
     string[] GetChartLabels()
     {

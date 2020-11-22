@@ -56,7 +56,7 @@ else
         <p class="skill-title">Selected skill: @selectedSkill</p>
         <div class="chart-area">
             <Piechart @bind-Labels="Labels" @bind-Values="skillCount" @ref="skillsChart"></Piechart>
-            <Barchart @bind-Labels="Labels" @bind-Values="skillCount" @ref="skillBarChart"></Barchart>
+            <Barchart @bind-Labels="Labels" @ref="skillBarChart"></Barchart>
         </div>
     }
 }
