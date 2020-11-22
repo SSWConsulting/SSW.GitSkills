@@ -2,6 +2,8 @@
 
 @code{
     BarChart<int> barChart;
+
+        private List<BarChartDataset<int>> datasets;
     
     [Parameter]
     public List<string> Labels { get; set; }
@@ -29,6 +31,22 @@
         await ValuesChanged.InvokeAsync(Values);
     }
 
+    public void AddSeries (string Label, List<int> Values)
+    {
+        SeedChartColors(Values.Count);
+
+        var ds = new BarChartDataset<int>
+        {
+            Label = Label,
+            Data = Values,
+            BackgroundColor = backgroundColors,
+            BorderColor = borderColors
+        };
+
+        datasets.Add(ds);
+        barChart.AddDataSet(ds);
+    }
+
     List<string> borderColors { get; set; }
     List<string> backgroundColors { get; set; }
 
@@ -50,7 +68,7 @@
     }
     async Task HandleRedraw()
     {
-        SeedChartColors();
+        SeedChartColors(Labels.Count);
 
         await barChart.Clear();
 
@@ -64,7 +82,8 @@
             Label = "# of commits",
             Data = GetChartData(),
             BackgroundColor = backgroundColors,
-            BorderColor = borderColors
+            BorderColor = borderColors,
+            
         };
         
         return ds;
@@ -82,10 +101,8 @@
         return Labels.ToArray();
     }
 
-    void SeedChartColors()
+    void SeedChartColors(int count)
     {
-        int count = Labels.Count;
-
         var r = new Random( DateTime.Now.Millisecond );
 
         backgroundColors = new List<string> ();
