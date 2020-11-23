@@ -4,6 +4,7 @@
 @inject GithubService githubService
 @implements IDisposable
 @using System.Collections.ObjectModel
+@* @using Blazorise.Icons.Material *@
 
 @page "/skills"
 
@@ -66,7 +67,7 @@ else
                             <Field Horizontal="true">
                                 <FieldLabel Margin="Margin.Is2">Chart Type:</FieldLabel>
                                 <FieldBody>
-                                    <RadioGroup TValue="ChartTypes" @bind-CheckedValue="@selectedChartType" Inline="true" Buttons="true">
+                                    <RadioGroup TValue="ChartTypes" Inline="true" Buttons="true" CheckedValueChanged="@OnChartTypeChanged">
                                         <Radio TValue="ChartTypes" Value="@ChartTypes.PieChart" Inline="true">Pie Chart</Radio>
                                         <Radio TValue="ChartTypes" Value="@ChartTypes.BarChart" Inline="true">Bar Chart</Radio>
                                     </RadioGroup>
@@ -81,22 +82,28 @@ else
             <Column ColumnSize="ColumnSize.Is8">
             @if(selectedChartType == ChartTypes.PieChart)
             {
-                <span>Selected skill: <Badge Color="Color.Primary" class="topic-badge">@selectedSkill</Badge></span>
+                <span><Icon Name="IconName.ChartPie" Margin="Margin.Is1" />Selected skill: <Badge Color="Color.Primary" class="topic-badge" Pill="true">@selectedSkill</Badge></span>
             }
             else if (selectedChartType == ChartTypes.BarChart)
             {
-                <span>Selected skills:</span>
+                <span><Icon Name="MaterialIcons.InsertChart" Margin="Margin.Is1"/>Selected skills:</span>
                 foreach(var skill in SelectedSkills)
                 {
-                    <Badge Color="Color.Primary" class="topic-badge" CloseClicked="@(() => RemoveSkill(@skill))">@skill&nbsp;</Badge>
+                    <Badge Color="Color.Primary" class="topic-badge" CloseClicked="@(() => RemoveSkill(@skill))" Pill="true">@skill&nbsp;</Badge>
                 }
             }
             </Column>
         </Row>
         
         <div class="chart-area">
-            <Piechart @bind-Labels="Labels" @bind-Values="skillCount" @ref="skillsChart"></Piechart>
-            <Barchart @bind-Labels="Labels" @ref="skillBarChart"></Barchart>
+            @if(selectedChartType == ChartTypes.PieChart)
+            {
+                <Piechart @bind-Labels="Labels" @bind-Values="skillCount" @ref="skillsChart"></Piechart>
+            }
+            else if(selectedChartType == ChartTypes.BarChart)
+            {
+                <Barchart @bind-Labels="Labels" @ref="skillBarChart"></Barchart>
+            }
         </div>
     }
 }
@@ -203,11 +210,12 @@ else
         }
     }
 
-    void AddSkill(string skill)
+    async Task AddSkill(string skill)
     {
         if(selectedChartType == ChartTypes.PieChart)
         {
             selectedSkill = skill;
+            await skillsChart.RedrawChart();
         }
         else if(selectedChartType == ChartTypes.BarChart)
         {
@@ -253,9 +261,13 @@ else
         });
     }
 
-    async Task UpdateChart(string skill)
+    void OnChartTypeChanged(ChartTypes value)
     {
-        selectedSkill = skill;
+        selectedChartType = value;
+    }
+
+    async Task UpdateChart()
+    {
         SeedValues();
         await skillsChart.RedrawChart();
         await skillBarChart.RedrawChart();
