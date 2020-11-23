@@ -230,6 +230,7 @@ else
 
             userList.ForEach(u => 
             {
+                Labels.Add(u.Name);
                 int commits = u.Skills
                     .Where(s => s.Tech == skill)
                     .Select(s => s.CommitCount)
@@ -286,6 +287,10 @@ else
         if(selectedChartType == ChartTypes.PieChart)
         {
             SelectedSkills.Clear();
+        }
+        else if(selectedChartType == ChartTypes.BarChart)
+        {
+            Labels.Clear();
         }
     }
 

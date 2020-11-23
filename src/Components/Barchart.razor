@@ -10,6 +10,16 @@
     </ul>
 </p>
 
+<p>Labels:</p>
+<p>
+    <ul>
+    @foreach (var label in Labels)
+    {
+        <li>@label</li>
+    }
+    </ul>
+</p>
+
 @code{
     BarChart<int> barChart;
 
