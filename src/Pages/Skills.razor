@@ -78,6 +78,16 @@ else
         </Card>
 
         <Accordion>
+            <Collapse Visible="@optionsVisible">
+                <CollapseHeader>
+                    <Heading Size="HeadingSize.Is3">
+                        Options <Button Clicked="@ToggleOptions()" Outline="true" Color="Color.Secondary">@showHide</Button>
+                    </Heading>
+                </CollapseHeader>
+            </Collapse>
+        </Accordion>
+
+        <Accordion>
             <Collapse Visible="@languagesVisible">
                 <CollapseHeader>
                     <Heading Size="HeadingSize.Is5">
@@ -142,6 +152,8 @@ else
 
     public bool languagesVisible { get; set; } = false;
     public bool topicsVisible { get; set; } = false;
+
+    bool optionsVisible { get; set; } = false;
 
     public List<string> Labels {get;set;} = new List<string>();
 
