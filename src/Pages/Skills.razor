@@ -18,109 +18,81 @@ else
     {
         <p><strong>Org name: </strong>@name</p>
 
-        <Card Margin="Margin.Is4">
-            <CardHeader>
-                <CardTitle>
-                    Skills Options
-                </CardTitle>
-            </CardHeader>
-            <CardBody>
-                <Row>
-                    <Column ColumnSize="ColumnSize.Is4">
-                        <Field Horizontal="true" Margin="Margin.Is1
-                        ">
-                            <FieldLabel>Languages</FieldLabel>
-                            <FieldBody>
-                                <SelectList></SelectList>
-                            </FieldBody>
-                        </Field>
-                    </Column>
-                    <Column ColumnSize="ColumnSize.Is4">
-                        <Field Horizontal="true">
-                            <FieldLabel>Topics</FieldLabel>
-                            <FieldBody>
-                                <SelectList></SelectList>
-                            </FieldBody>
-                        </Field>
-                    </Column>
-                    <Column ColumnSize="ColumnSize.Is4">
-                        <Field Horizontal="true">
-                            <FieldLabel>Filter (all)</FieldLabel>
-                            <FieldBody>
-                                <TextExit Placeholder="Filter..." />
-                            </FieldBody>
-                        </Field>
-                    </Column>
-                </Row>
-                <Divider />
-                <Row>
-                    <Column ColumnSize="ColumnSize.Is8">
-                        Selected skill(s): @selectedSkill
-                    </Column>
-                    <Column ColumnSize="ColumnSize.Is4">
-                        <Dropdown>
-                            <DropdownToggle Color="Color.Secondary">
-                                Chart Type
-                            </DropdownToggle>
-                            <DropdownMenu>
-                                <DropdownItem Clicked="@(() => ChangeChartType(ChartTypes.PieChart))">
-                                    Pie Chart (1 skill)
-                                </DropdownItem>
-                                <DropdownDivider />
-                                <DropdownItem Clicked="@(() => ChangeChartType(ChartTypes.BarChart))">
-                                    Bar Chart (multiple skills)
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    </Column>
-                </Row>
-            </CardBody>
-        </Card>
-
         <Accordion>
             <Collapse Visible="@optionsVisible">
                 <CollapseHeader>
                     <Heading Size="HeadingSize.Is3">
-                        Options <Button Clicked="@ToggleOptions()" Outline="true" Color="Color.Secondary">@showHide</Button>
+                        Options <Button Clicked="@(() => ToggleOptions())" Outline="true" Color="Color.Secondary">@showHide</Button>
                     </Heading>
                 </CollapseHeader>
-            </Collapse>
-        </Accordion>
-
-        <Accordion>
-            <Collapse Visible="@languagesVisible">
-                <CollapseHeader>
-                    <Heading Size="HeadingSize.Is5">
-                        <Button Clicked="@(()=> languagesVisible = !languagesVisible)" Outline="true">Languages</Button>
-                    </Heading>
-                </CollapseHeader>
-                <CollapseBody class="badge-container">
-                <div class="badge-container">
-                    @foreach (var lang in Languages)
-                    {
-                        <Button Color="Color.Primary" Clicked="@(() => UpdateChart(@lang))" style="margin: 5px;">@lang</Button>
-                        @Environment.NewLine;
-                    }
-                </div>
+                <CollapseBody>
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is3">
+                            <Field Horizontal="true" Margin="Margin.Is1
+                            ">
+                                <FieldLabel Margin="Margin.Is2">Languages:</FieldLabel>
+                                <FieldBody>
+                                    <Select TValue="string" SelectedValueChanged="@OnSelectedSkillChanged">
+                                        @foreach (var lang in Languages)
+                                        {
+                                            <SelectItem Value="@lang">@lang</SelectItem>
+                                        }
+                                    </Select>
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is3">
+                            <Field Horizontal="true">
+                                <FieldLabel Margin="Margin.Is2">Topics:</FieldLabel>
+                                <FieldBody>
+                                    <Select TValue="string" SelectedValueChanged="@OnSelectedSkillChanged">
+                                        @foreach (var topic in Topics)
+                                        {
+                                            <SelectItem Value="@topic">@topic</SelectItem>
+                                        }
+                                    </Select>
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is3">
+                            <Field Horizontal="true">
+                                <FieldLabel Margin="Margin.Is2">Filter (all)</FieldLabel>
+                                <FieldBody>
+                                    <Autocomplete Data="@SelectData" Placeholder="Filter..." TextField="@((item) => item)" ValueField="@((item) => item)" SelectedValueChanged="@AutocompleteSelectChanged"/>
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is3">
+                            <Field Horizontal="true">
+                                <FieldLabel Margin="Margin.Is2">Chart Type:</FieldLabel>
+                                <FieldBody>
+                                    <RadioGroup TValue="ChartTypes" @bind-CheckedValue="@selectedChartType" Inline="true" Buttons="true">
+                                        <Radio TValue="ChartTypes" Value="@ChartTypes.PieChart" Inline="true">Pie Chart</Radio>
+                                        <Radio TValue="ChartTypes" Value="@ChartTypes.BarChart" Inline="true">Bar Chart</Radio>
+                                    </RadioGroup>
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
                 </CollapseBody>
             </Collapse>
-            <Collapse Visible="@topicsVisible">
-                <CollapseHeader>
-                    <Heading Size="HeadingSize.Is5">
-                        <Button Clicked="@(()=> topicsVisible = !topicsVisible)" Outline="true">Topics</Button>
-                    </Heading>
-                </CollapseHeader>
-                <CollapseBody class="badge-container">
-                <div class="badge-container">
-                    @foreach (var topic in Topics)
-                    {
-                        <Button Color="Color.Primary" Clicked="@(()=> UpdateChart(@topic))" style="margin: 5px;">@topic</Button>
-                        @Environment.NewLine;
-                    }
-                </div>
-                </CollapseBody>
-            </Collapse>
         </Accordion>
+        <Row Margin="Margin.Is4">
+            <Column ColumnSize="ColumnSize.Is8">
+            @if(selectedChartType == ChartTypes.PieChart)
+            {
+                <span>Selected skill: <Badge Color="Color.Primary" class="topic-badge">@selectedSkill</Badge></span>
+            }
+            else if (selectedChartType == ChartTypes.BarChart)
+            {
+                <span>Selected skills:</span>
+                foreach(var skill in SelectedSkills)
+                {
+                    <Badge Color="Color.Primary" class="topic-badge" CloseClicked="@(() => RemoveSkill(@skill))">@skill&nbsp;</Badge>
+                }
+            }
+            </Column>
+        </Row>
         
         <div class="chart-area">
             <Piechart @bind-Labels="Labels" @bind-Values="skillCount" @ref="skillsChart"></Piechart>
@@ -150,14 +122,13 @@ else
 
     string stacktrace = "";
 
-    public bool languagesVisible { get; set; } = false;
-    public bool topicsVisible { get; set; } = false;
+    string showHide { get; set; } = "Show";
 
     bool optionsVisible { get; set; } = false;
 
     public List<string> Labels {get;set;} = new List<string>();
 
-    public List<string> SelectedSkills { get; set; }
+    public ObservableCollection<string> SelectedSkills { get; set; } = new ObservableCollection<string>();
 
     private ChartTypes selectedChartType { get; set; }
 
@@ -168,6 +139,9 @@ else
 
     Piechart skillsChart;
     Barchart skillBarChart;
+
+    List<string> AllSkills { get; set; } = new List<string>();
+    IEnumerable<string> SelectData;
 
     protected override async Task OnInitializedAsync()
     {
@@ -185,14 +159,18 @@ else
             foreach(var lang in githubService.Languages)
             {
                 Languages.Add(lang);
+                AllSkills.Add(lang);
             }
 
             foreach(var topic in githubService.Topics)
             {
                 Topics.Add(topic);
+                AllSkills.Add(topic);
             }
 
             name = result.Name;
+
+            SelectData = Enumerable.Range(0, AllSkills.Count - 1).Select(x => AllSkills[x]);
 
             SeedValues();
         }
@@ -204,6 +182,54 @@ else
             stacktrace = ex.StackTrace;
             snackbarError.Show();
         }
+    }
+
+    void OnSelectedSkillChanged(string skill)
+    {
+        AddSkill(skill);
+    }
+
+    void ToggleOptions ()
+    {
+        optionsVisible = !optionsVisible;
+
+        if(optionsVisible)
+        {
+            showHide = "Hide";
+        }
+        else
+        {
+            showHide = "Show";
+        }
+    }
+
+    void AddSkill(string skill)
+    {
+        if(selectedChartType == ChartTypes.PieChart)
+        {
+            selectedSkill = skill;
+        }
+        else if(selectedChartType == ChartTypes.BarChart)
+        {
+            SelectedSkills.Add(skill);
+            // TODO: Add more functionality to update series and charts etc
+        }
+    }
+
+    void AutocompleteSelectChanged(object value)
+    {
+        var newSkill = value as string;
+
+        if(!string.IsNullOrWhiteSpace(newSkill))
+        {
+            AddSkill(newSkill);
+        }
+    }
+    void RemoveSkill(string skill)
+    {
+        var sk = SelectedSkills.Where(s => s == skill).FirstOrDefault();
+        
+        SelectedSkills.Remove(sk);
     }
 
     void SeedValues()
@@ -240,8 +266,4 @@ else
         StateContainer.OnChange -= StateHasChanged;
     }
 
-    void ChangeChartType(ChartTypes chartType)
-    {
-
-    }
 }
