@@ -5,7 +5,7 @@
 @implements IDisposable
 @using System.Collections.ObjectModel
 
-@page "/github"
+@page "/skills"
 
 <h3>Organization Info</h3>
 @if (StateContainer.isLoading)
@@ -18,11 +18,69 @@ else
     {
         <p><strong>Org name: </strong>@name</p>
 
+        <Card Margin="Margin.Is4">
+            <CardHeader>
+                <CardTitle>
+                    Skills Options
+                </CardTitle>
+            </CardHeader>
+            <CardBody>
+                <Row>
+                    <Column ColumnSize="ColumnSize.Is4">
+                        <Field Horizontal="true">
+                            <FieldLabel>Languages</FieldLabel>
+                            <FieldBody>
+                                <SelectList></SelectList>
+                            </FieldBody>
+                        </Field>
+                    </Column>
+                    <Column ColumnSize="ColumnSize.Is4">
+                        <Field Horizontal="true">
+                            <FieldLabel>Topics</FieldLabel>
+                            <FieldBody>
+                                <SelectList></SelectList>
+                            </FieldBody>
+                        </Field>
+                    </Column>
+                    <Column ColumnSize="ColumnSize.Is4">
+                        <Field Horizontal="true">
+                            <FieldLabel>Filter (all)</FieldLabel>
+                            <FieldBody>
+                                <TextExit Placeholder="Filter..." />
+                            </FieldBody>
+                        </Field>
+                    </Column>
+                </Row>
+                <Divider />
+                <Row>
+                    <Column ColumnSize="ColumnSize.Is8">
+                        Selected skill(s): @selectedSkill
+                    </Column>
+                    <Column ColumnSize="ColumnSize.Is4">
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Secondary">
+                                Chart Type
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem Clicked="@(() => ChangeChartType(ChartTypes.PieChart))">
+                                    Pie Chart (1 skill)
+                                </DropdownItem>
+                                <DropdownDivider />
+                                <DropdownItem Clicked="@(() => ChangeChartType(ChartTypes.BarChart))">
+                                    Bar Chart (multiple skills)
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </Column>
+                </Row>
+            </CardBody>
+        </Card>
+
         <Accordion>
             <Collapse Visible="@languagesVisible">
                 <CollapseHeader>
                     <Heading Size="HeadingSize.Is5">
-                        <Button Clicked="@(()=> languagesVisible = !languagesVisible)">Languages</Button>
+                        <Button Clicked="@(()=> languagesVisible = !languagesVisible)" Outline="true">Languages</Button>
                     </Heading>
                 </CollapseHeader>
                 <CollapseBody class="badge-container">
@@ -38,7 +96,7 @@ else
             <Collapse Visible="@topicsVisible">
                 <CollapseHeader>
                     <Heading Size="HeadingSize.Is5">
-                        <Button Clicked="@(()=> topicsVisible = !topicsVisible)">Topics</Button>
+                        <Button Clicked="@(()=> topicsVisible = !topicsVisible)" Outline="true">Topics</Button>
                     </Heading>
                 </CollapseHeader>
                 <CollapseBody class="badge-container">
@@ -52,8 +110,7 @@ else
                 </CollapseBody>
             </Collapse>
         </Accordion>
-
-        <p class="skill-title">Selected skill: @selectedSkill</p>
+        
         <div class="chart-area">
             <Piechart @bind-Labels="Labels" @bind-Values="skillCount" @ref="skillsChart"></Piechart>
             <Barchart @bind-Labels="Labels" @ref="skillBarChart"></Barchart>
@@ -86,6 +143,10 @@ else
     public bool topicsVisible { get; set; } = false;
 
     public List<string> Labels {get;set;} = new List<string>();
+
+    public List<string> SelectedSkills { get; set; }
+
+    private ChartTypes selectedChartType { get; set; }
 
     public List<int> skillCount = new List<int>();
     Snackbar snackbarError;
@@ -164,5 +225,10 @@ else
     public void Dispose()
     {
         StateContainer.OnChange -= StateHasChanged;
+    }
+
+    void ChangeChartType(ChartTypes chartType)
+    {
+
     }
 }

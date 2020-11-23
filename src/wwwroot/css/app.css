@@ -138,8 +138,8 @@ app {
 }
 
 .skill-title {
-    text-align: center;
     text-emphasis: bold;
+    margin: 10px;
 }
 
 .validation-message {

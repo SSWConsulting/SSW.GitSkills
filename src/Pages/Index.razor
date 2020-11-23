@@ -56,7 +56,8 @@
     <p>
         Click the Skills button to go to the GitHub Skills chart page.
     </p>
-    <Button @bind-Disabled="ButtonDisabled" Color="Color.Primary" Clicked="@(() => GoToGithub())">Skills</Button>
+    <Button @bind-Disabled="ButtonDisabled" Color="Color.Primary" Clicked="@(() => GoToSkills())">Explore Skills</Button>
+    <Button @bind-Disabled="ButtonDisabled" Color="Color.Primary" Clicked="@(() => GoToUsers())">Explore Users</Button>
     @if(ButtonDisabled)
     {
         <span style="margin-left: 5px; color:grey;"> (Disabled until token provided)</span>
@@ -88,9 +89,14 @@
         }
     }
 
-    void GoToGithub()
+    void GoToSkills()
     {
-        navigationManager.NavigateTo("github");
+        navigationManager.NavigateTo("skills");
+    }
+
+        void GoToUsers()
+    {
+        navigationManager.NavigateTo("users");
     }
 
     private async Task SetToken()

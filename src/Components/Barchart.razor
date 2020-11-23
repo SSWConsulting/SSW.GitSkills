@@ -60,7 +60,7 @@
     {
         await barChart.Clear();
 
-        await barChart.AddLabelsDatasetsAndUpdate( GetChartLabels(), datasets );        
+        await barChart.AddLabelsDatasetsAndUpdate( GetChartLabels(), datasets.ToArray() );        
     }
 
     /*List<int> GetChartData()
