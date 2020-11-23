@@ -19,14 +19,14 @@ else
     {
         <p><strong>Org name: </strong>@name</p>
 
-        <Accordion>
+        <Accordion Overflow="visible">
             <Collapse Visible="@optionsVisible">
                 <CollapseHeader>
                     <Heading Size="HeadingSize.Is3">
                         Options <Button Clicked="@(() => ToggleOptions())" Outline="true" Color="Color.Secondary">@showHide</Button>
                     </Heading>
                 </CollapseHeader>
-                <CollapseBody>
+                <CollapseBody Overflow="visible">
                     <Row>
                         <Column ColumnSize="ColumnSize.Is3">
                             <Field Horizontal="true" Margin="Margin.Is1
@@ -59,7 +59,7 @@ else
                             <Field Horizontal="true">
                                 <FieldLabel Margin="Margin.Is2">Filter (all)</FieldLabel>
                                 <FieldBody>
-                                    <Autocomplete Data="@SelectData" Placeholder="Filter..." TextField="@((item) => item)" ValueField="@((item) => item)" SelectedValueChanged="@AutocompleteSelectChanged"/>
+                                    <Autocomplete Data="@SelectData" Placeholder="Filter..." TextField="@((item) => item)" ValueField="@((item) => item)" SelectedValueChanged="@AutocompleteSelectChanged" Overflow="visible" Placement="Top" style="z-index:999999999;"/>
                                 </FieldBody>
                             </Field>
                         </Column>
@@ -86,7 +86,7 @@ else
             }
             else if (selectedChartType == ChartTypes.BarChart)
             {
-                <span><Icon Name="MaterialIcons.InsertChart" Margin="Margin.Is1"/>Selected skills:</span>
+                <span><Icon Name="IconName.Dashboard" Margin="Margin.Is1"/>Selected skills:</span>
                 foreach(var skill in SelectedSkills)
                 {
                     <Badge Color="Color.Primary" class="topic-badge" CloseClicked="@(() => RemoveSkill(@skill))" Pill="true">@skill&nbsp;</Badge>
@@ -215,12 +215,30 @@ else
         if(selectedChartType == ChartTypes.PieChart)
         {
             selectedSkill = skill;
+            SeedValues();
             await skillsChart.RedrawChart();
         }
         else if(selectedChartType == ChartTypes.BarChart)
         {
             SelectedSkills.Add(skill);
             // TODO: Add more functionality to update series and charts etc
+            var skills = new List<int>();
+
+            var userList = githubService.Users
+                .Where(u => u.Skills.Where(s => s.Tech == skill).Any())
+                .ToList();
+
+            userList.ForEach(u => 
+            {
+                int commits = u.Skills
+                    .Where(s => s.Tech == skill)
+                    .Select(s => s.CommitCount)
+                    .Sum();
+                
+                skills.Add(commits);
+            });
+
+            skillBarChart.AddSeries(skill, skills);
         }
     }
 
@@ -238,6 +256,7 @@ else
         var sk = SelectedSkills.Where(s => s == skill).FirstOrDefault();
         
         SelectedSkills.Remove(sk);
+        skillBarChart.RemoveSeries(skill);
     }
 
     void SeedValues()
@@ -264,6 +283,10 @@ else
     void OnChartTypeChanged(ChartTypes value)
     {
         selectedChartType = value;
+        if(selectedChartType == ChartTypes.PieChart)
+        {
+            SelectedSkills.Clear();
+        }
     }
 
     async Task UpdateChart()
