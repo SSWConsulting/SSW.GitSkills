@@ -26,8 +26,8 @@ There are a number of limitations with this approach, and unless these can be re
 * Language detection is inconsistent (e.g., GitHub will detect JavaScript, TypeScript and Vue as languages, but won't detect Angular or React)
 
 ## Todo
-- [ ] Add more chart types
-- [ ] Allow selecting of multiple skills
+- [x] Add more chart types
+- [x] Allow selecting of multiple skills
 - [ ] Allow navigation by user as well as by skill
 - [x] (Potentially) Add authentication
 
