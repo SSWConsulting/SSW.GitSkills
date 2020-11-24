@@ -179,7 +179,7 @@ else
 
             SelectData = Enumerable.Range(0, AllSkills.Count - 1).Select(x => AllSkills[x]);
 
-            SeedValues();
+            SeedPiechartValues();
         }
         catch (Exception ex)
         {
@@ -215,31 +215,40 @@ else
         if(selectedChartType == ChartTypes.PieChart)
         {
             selectedSkill = skill;
-            SeedValues();
+            SeedPiechartValues();
             await skillsChart.RedrawChart();
         }
         else if(selectedChartType == ChartTypes.BarChart)
         {
             SelectedSkills.Add(skill);
-            // TODO: Add more functionality to update series and charts etc
-            var skills = new List<int>();
+            Labels.Clear();
+            skillBarChart.ClearSeries();
 
-            var userList = githubService.Users
-                .Where(u => u.Skills.Where(s => s.Tech == skill).Any())
+            var relevantUsers = githubService.Users
+                .Where(u => u.Skills
+                    .Select(s => s.Tech)
+                    .Any(t => SelectedSkills.Contains(t)))
                 .ToList();
 
-            userList.ForEach(u => 
-            {
-                Labels.Add(u.Name);
-                int commits = u.Skills
-                    .Where(s => s.Tech == skill)
-                    .Select(s => s.CommitCount)
-                    .Sum();
-                
-                skills.Add(commits);
-            });
+            Labels = relevantUsers.Select(r => r.Name).ToList();
 
-            skillBarChart.AddSeries(skill, skills);
+            foreach(string tech in SelectedSkills)
+            {
+                var values = new List<int>();
+
+                relevantUsers.ForEach(u => {
+                    int commits = u.Skills
+                        .Where(s => s.Tech == tech)
+                        .Select(s => s.CommitCount)
+                        .Sum();
+                    
+                    values.Add(commits);
+                });
+
+               skillBarChart.AddSeries(tech, values);
+            }
+
+            await skillBarChart.RedrawChart();
         }
     }
 
@@ -260,7 +269,7 @@ else
         skillBarChart.RemoveSeries(skill);
     }
 
-    void SeedValues()
+    void SeedPiechartValues()
     {
         Labels = new List<string>();
         skillCount = new List<int>();
@@ -287,6 +296,7 @@ else
         if(selectedChartType == ChartTypes.PieChart)
         {
             SelectedSkills.Clear();
+           Labels.Clear();
         }
         else if(selectedChartType == ChartTypes.BarChart)
         {
@@ -296,7 +306,7 @@ else
 
     async Task UpdateChart()
     {
-        SeedValues();
+        SeedPiechartValues();
         await skillsChart.RedrawChart();
         await skillBarChart.RedrawChart();
     }
@@ -305,5 +315,4 @@ else
     {
         StateContainer.OnChange -= StateHasChanged;
     }
-
 }
