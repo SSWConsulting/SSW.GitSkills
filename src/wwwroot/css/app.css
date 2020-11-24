@@ -39,6 +39,10 @@ app {
     flex-wrap: wrap;
 }
 
+.skill-lookup {
+    z-index: 99999999;
+}
+
 .top-row {
     height: 3.5rem;
     display: flex;
@@ -138,8 +142,8 @@ app {
 }
 
 .skill-title {
-    text-align: center;
     text-emphasis: bold;
+    margin: 10px;
 }
 
 .validation-message {

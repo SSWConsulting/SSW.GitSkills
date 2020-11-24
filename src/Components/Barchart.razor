@@ -1,0 +1,108 @@
+<BarChart @ref="barChart" TItem="int" />
+
+@code{
+    BarChart<int> barChart;
+
+    private List<BarChartDataset<int>> datasets { get; set; } = new List<BarChartDataset<int>>();
+    
+    [Parameter]
+    public List<string> Labels { get; set; }
+
+    [Parameter]
+    public EventCallback<List<string>> LabelsChanged { get; set; }
+
+    private async Task OnLabelsChanged(ChangeEventArgs e)
+    {
+        var theList = e.Value as List<string>;
+        Labels = theList;
+        await LabelsChanged.InvokeAsync(Labels);
+    }
+
+    public void ClearSeries()
+    {
+        datasets.Clear();
+    }
+    public async Task AddSeries (string Label, List<int> Values)
+    {
+        var colors = GetChartColor();
+
+        var backgroundColors = new List<string>();
+        var borderColors = new List<string>();
+        var hoverBackground = new List<string>();
+        var hoverBorder = new List<string>();
+
+        for(int i = 0; i < Values.Count; i++)
+        {
+            backgroundColors.Add(colors.BackgroundColor);
+            borderColors.Add(colors.BorderColor);
+            hoverBackground.Add(colors.HoverColor);
+            hoverBorder.Add(colors.HoverBorder);
+        }
+
+        var ds = new BarChartDataset<int>
+        {
+            Label = Label,
+            Data = Values,
+            BackgroundColor = backgroundColors,
+            BorderColor = borderColors,
+            HoverBackgroundColor = hoverBackground,
+            HoverBorderColor = hoverBorder
+        };
+
+        datasets.Add(ds);
+        //await HandleRedraw();
+    }
+
+    public async Task RemoveSeries(string label)
+    {
+        var ds = datasets.Where(d => d.Label == label).FirstOrDefault();
+        datasets.Remove(ds);
+        await HandleRedraw();
+    }
+
+    List<string> borderColors { get; set; }
+    List<string> backgroundColors { get; set; }
+
+    public async Task RedrawChart()
+    {
+        await HandleRedraw();
+    }
+
+    async Task HandleRedraw()
+    {
+        await barChart.Clear();
+
+        await barChart.AddLabelsDatasetsAndUpdate( GetChartLabels(), datasets.ToArray() );        
+    }
+
+    string[] GetChartLabels()
+    {
+        return Labels.ToArray();
+    }
+
+    SeriesChartColor GetChartColor()
+    {
+        var r = new Random( DateTime.Now.Millisecond );
+        var color = new SeriesChartColor();
+
+        var r1 = Convert.ToByte(r.Next(0, 255));
+        var r2 = Convert.ToByte(r.Next(0, 255));
+        var r3 = Convert.ToByte(r.Next(0, 255));
+
+        color.BackgroundColor = ChartColor.FromRgba(r1, r2, r3, 0.6f);
+        color.BorderColor = ChartColor.FromRgba(r1, r2, r3, 1f);
+        color.HoverColor = ChartColor.FromRgba(r1, r2, r3, 0.4f);
+        color.HoverBorder = ChartColor.FromRgba(r1, r2, r3, 0.8f);
+
+        return color;
+    }
+
+    private class SeriesChartColor
+    {
+        public ChartColor BackgroundColor { get; set; }
+        public ChartColor BorderColor { get; set; }
+
+        public ChartColor HoverColor { get; set; }
+        public ChartColor HoverBorder { get; set; }
+    }
+}

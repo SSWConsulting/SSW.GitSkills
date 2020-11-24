@@ -1,0 +1,318 @@
+﻿@using gitskills.Models
+@using gitskills.Components
+@inject StateContainer StateContainer
+@inject GithubService githubService
+@implements IDisposable
+@using System.Collections.ObjectModel
+@* @using Blazorise.Icons.Material *@
+
+@page "/skills"
+
+<h3>Organization Info</h3>
+@if (StateContainer.isLoading)
+{
+    <p><em>@LoadingMessage</em></p>
+}
+else
+{
+    if (!isError)
+    {
+        <p><strong>Org name: </strong>@name</p>
+
+        <Accordion Overflow="visible">
+            <Collapse Visible="@optionsVisible">
+                <CollapseHeader>
+                    <Heading Size="HeadingSize.Is3">
+                        Options <Button Clicked="@(() => ToggleOptions())" Outline="true" Color="Color.Secondary">@showHide</Button>
+                    </Heading>
+                </CollapseHeader>
+                <CollapseBody Overflow="visible">
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is3">
+                            <Field Horizontal="true" Margin="Margin.Is1
+                            ">
+                                <FieldLabel Margin="Margin.Is2">Languages:</FieldLabel>
+                                <FieldBody>
+                                    <Select TValue="string" SelectedValueChanged="@OnSelectedSkillChanged">
+                                        @foreach (var lang in Languages)
+                                        {
+                                            <SelectItem Value="@lang">@lang</SelectItem>
+                                        }
+                                    </Select>
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is3">
+                            <Field Horizontal="true">
+                                <FieldLabel Margin="Margin.Is2">Topics:</FieldLabel>
+                                <FieldBody>
+                                    <Select TValue="string" SelectedValueChanged="@OnSelectedSkillChanged">
+                                        @foreach (var topic in Topics)
+                                        {
+                                            <SelectItem Value="@topic">@topic</SelectItem>
+                                        }
+                                    </Select>
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is3">
+                            <Field Horizontal="true">
+                                <FieldLabel Margin="Margin.Is2">Filter (all)</FieldLabel>
+                                <FieldBody>
+                                    <Autocomplete Data="@SelectData" Placeholder="Filter..." TextField="@((item) => item)" ValueField="@((item) => item)" SelectedValueChanged="@AutocompleteSelectChanged" Overflow="visible" Placement="Top" style="z-index:999999999;"/>
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is3">
+                            <Field Horizontal="true">
+                                <FieldLabel Margin="Margin.Is2">Chart Type:</FieldLabel>
+                                <FieldBody>
+                                    <RadioGroup TValue="ChartTypes" Inline="true" Buttons="true" CheckedValueChanged="@OnChartTypeChanged">
+                                        <Radio TValue="ChartTypes" Value="@ChartTypes.PieChart" Inline="true">Pie Chart</Radio>
+                                        <Radio TValue="ChartTypes" Value="@ChartTypes.BarChart" Inline="true">Bar Chart</Radio>
+                                    </RadioGroup>
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+                </CollapseBody>
+            </Collapse>
+        </Accordion>
+        <Row Margin="Margin.Is4">
+            <Column ColumnSize="ColumnSize.Is8">
+            @if(selectedChartType == ChartTypes.PieChart)
+            {
+                <span><Icon Name="IconName.ChartPie" Margin="Margin.Is1" />Selected skill: <Badge Color="Color.Primary" class="topic-badge" Pill="true">@selectedSkill</Badge></span>
+            }
+            else if (selectedChartType == ChartTypes.BarChart)
+            {
+                <span><Icon Name="IconName.Dashboard" Margin="Margin.Is1"/>Selected skills:</span>
+                foreach(var skill in SelectedSkills)
+                {
+                    <Badge Color="Color.Primary" class="topic-badge" CloseClicked="@(() => RemoveSkill(@skill))" Pill="true">@skill&nbsp;</Badge>
+                }
+            }
+            </Column>
+        </Row>
+        
+        <div class="chart-area">
+            @if(selectedChartType == ChartTypes.PieChart)
+            {
+                <Piechart @bind-Labels="Labels" @bind-Values="skillCount" @ref="skillsChart"></Piechart>
+            }
+            else if(selectedChartType == ChartTypes.BarChart)
+            {
+                <Barchart @bind-Labels="Labels" @ref="skillBarChart"></Barchart>
+            }
+        </div>
+    }
+}
+
+
+<Snackbar @ref="snackbarError" Color="SnackbarColor.Danger">
+    <SnackbarBody>
+        <p>@errorMessage</p>
+        <p>Please reload the page to try again</p>
+    </SnackbarBody>
+</Snackbar>
+
+@code {
+
+    private bool isError { get; set; } = false;
+    private string errorMessage = "";
+    string name = "";
+
+    public ObservableCollection<string> Languages { get; set; } = new ObservableCollection<string>();
+    public ObservableCollection<string> Topics { get; set; } = new ObservableCollection<string>();
+
+    public string LoadingMessage { get; set; } = "Loading organization information from GitHub...";
+
+    string stacktrace = "";
+
+    string showHide { get; set; } = "Show";
+
+    bool optionsVisible { get; set; } = false;
+
+    public List<string> Labels {get;set;} = new List<string>();
+
+    public ObservableCollection<string> SelectedSkills { get; set; } = new ObservableCollection<string>();
+
+    private ChartTypes selectedChartType { get; set; }
+
+    public List<int> skillCount = new List<int>();
+    Snackbar snackbarError;
+
+    string selectedSkill;
+
+    Piechart skillsChart;
+    Barchart skillBarChart;
+
+    List<string> AllSkills { get; set; } = new List<string>();
+    IEnumerable<string> SelectData;
+
+    protected override async Task OnInitializedAsync()
+    {
+        StateContainer.OnChange += StateHasChanged;
+
+        StateContainer.SetLoading(true);
+
+        try
+        {
+            // TODO: get organization from configuration or from the user and store in local storage
+            var result = await githubService.GetOrgQuery("sswconsulting");
+
+            StateContainer.SetLoading(false);
+
+            foreach(var lang in githubService.Languages)
+            {
+                Languages.Add(lang);
+                AllSkills.Add(lang);
+            }
+
+            foreach(var topic in githubService.Topics)
+            {
+                Topics.Add(topic);
+                AllSkills.Add(topic);
+            }
+
+            name = result.Name;
+
+            SelectData = Enumerable.Range(0, AllSkills.Count - 1).Select(x => AllSkills[x]);
+
+            SeedPiechartValues();
+        }
+        catch (Exception ex)
+        {
+            StateContainer.SetLoading(false);
+            isError = true;
+            errorMessage = ex.Message;
+            stacktrace = ex.StackTrace;
+            snackbarError.Show();
+        }
+    }
+
+    void OnSelectedSkillChanged(string skill)
+    {
+        AddSkill(skill);
+    }
+
+    void ToggleOptions ()
+    {
+        optionsVisible = !optionsVisible;
+
+        if(optionsVisible)
+        {
+            showHide = "Hide";
+        }
+        else
+        {
+            showHide = "Show";
+        }
+    }
+
+    async Task AddSkill(string skill)
+    {
+        if(selectedChartType == ChartTypes.PieChart)
+        {
+            selectedSkill = skill;
+            SeedPiechartValues();
+            await skillsChart.RedrawChart();
+        }
+        else if(selectedChartType == ChartTypes.BarChart)
+        {
+            SelectedSkills.Add(skill);
+            Labels.Clear();
+            skillBarChart.ClearSeries();
+
+            var relevantUsers = githubService.Users
+                .Where(u => u.Skills
+                    .Select(s => s.Tech)
+                    .Any(t => SelectedSkills.Contains(t)))
+                .ToList();
+
+            Labels = relevantUsers.Select(r => r.Name).ToList();
+
+            foreach(string tech in SelectedSkills)
+            {
+                var values = new List<int>();
+
+                relevantUsers.ForEach(u => {
+                    int commits = u.Skills
+                        .Where(s => s.Tech == tech)
+                        .Select(s => s.CommitCount)
+                        .Sum();
+                    
+                    values.Add(commits);
+                });
+
+               skillBarChart.AddSeries(tech, values);
+            }
+
+            await skillBarChart.RedrawChart();
+        }
+    }
+
+    void AutocompleteSelectChanged(object value)
+    {
+        var newSkill = value as string;
+
+        if(!string.IsNullOrWhiteSpace(newSkill))
+        {
+            AddSkill(newSkill);
+        }
+    }
+    void RemoveSkill(string skill)
+    {
+        var sk = SelectedSkills.Where(s => s == skill).FirstOrDefault();
+        
+        SelectedSkills.Remove(sk);
+        skillBarChart.RemoveSeries(skill);
+    }
+
+    void SeedPiechartValues()
+    {
+        Labels = new List<string>();
+        skillCount = new List<int>();
+
+        var userList = githubService.Users
+            .Where(u => u.Skills.Where(s => s.Tech == selectedSkill).Any())
+            .ToList();
+
+        userList.ForEach(u => 
+        {
+            Labels.Add(u.Name);
+            int skill = u.Skills
+                .Where(s => s.Tech == selectedSkill)
+                .Select(s => s.CommitCount)
+                .Sum();
+            
+            skillCount.Add(skill);
+        });
+    }
+
+    void OnChartTypeChanged(ChartTypes value)
+    {
+        selectedChartType = value;
+        if(selectedChartType == ChartTypes.PieChart)
+        {
+            SelectedSkills.Clear();
+           Labels.Clear();
+        }
+        else if(selectedChartType == ChartTypes.BarChart)
+        {
+            Labels.Clear();
+        }
+    }
+
+    async Task UpdateChart()
+    {
+        SeedPiechartValues();
+        await skillsChart.RedrawChart();
+        await skillBarChart.RedrawChart();
+    }
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
+}

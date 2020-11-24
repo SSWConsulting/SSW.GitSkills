@@ -1,5 +1,3 @@
-@* <Button Clicked="@(async () => await HandleRedraw())">Redraw</Button> *@
-
 <PieChart @ref="pieChart" TItem="int" />
 
 @code{
@@ -63,14 +61,12 @@
     {
         return new PieChartDataset<int>
         {
-            Label = "# of randoms",
+            Label = "# of commits",
             Data = GetChartData(),
             BackgroundColor = backgroundColors,
             BorderColor = borderColors
         };
     }
-
-    string[] chartLabels = { "Red", "Blue", "Yellow", "Green", "Purple", "Orange" };
 
     List<int> GetChartData()
     {
