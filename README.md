@@ -7,7 +7,8 @@ The results are displayed graphically in chart form enabling you to easily visua
 
 
 ## Skills
-  Skills are enumerated from 2 data sources - Languages and Topics. Languages are automatically detected by GitHub and tagged onto a repository with every commit. Topics are added manually to a repository to help describe the technology, intent, and purpose.
+  Skills are enumerated from 2 data sources - Languages and Topics. Languages are automatically detected by GitHub and tagged onto a repository with every commit. Topics are added manually to a repository to help describe the technology, intent, and purpose.    
+  See our rule: [SSW Rules: Do you use Github topics?](https://rules.ssw.com.au/use-github-topics)
      
 
 ## Technologies Used
