@@ -1,3 +1,5 @@
+[![Live Demo](https://img.shields.io/badge/demo-online-green.svg)](https://gitskills.z8.web.core.windows.net/)
+
 <img src="https://raw.githubusercontent.com/SSWConsulting/SSW.People.Profiles/main/_docs/images/ssw-banner.png">
 
 # SSW.GitSkills
