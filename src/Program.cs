@@ -21,7 +21,7 @@ namespace gitskills
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<App>("app");
+            builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddBlazorise(options =>
             {
@@ -32,10 +32,10 @@ namespace gitskills
 
             builder.Services.AddSingleton<StateContainer>();
 
-            builder.Services.AddBlazoredLocalStorage();
+            builder.Services.AddSingleton<ILocalStorageService, LocalStorageService>();
+            builder.Services.AddSingleton<ISyncLocalStorageService, LocalStorageService>();
 
-            // TODO: get the token from the user and store in local storage
-            builder.Services.AddScoped<GithubService>();
+            builder.Services.AddSingleton<GithubService>();
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 

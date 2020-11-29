@@ -25,6 +25,8 @@ namespace gitskills.Github
 
         private ISyncLocalStorageService _localStorage;
 
+        private Organization organization { get; set; }
+
         public GithubService(ISyncLocalStorageService localStorageService)
         {
             _graphQlClient = new GraphQLHttpClient("https://api.github.com/graphql", new NewtonsoftJsonSerializer());
@@ -43,6 +45,9 @@ namespace gitskills.Github
 
         public async Task<Organization> GetOrgQuery(string OrganizationName)
         {
+          if(organization != null)
+            return organization;
+
           orgRequest.Variables = new
           {
               name = OrganizationName
@@ -50,10 +55,10 @@ namespace gitskills.Github
           
           var graphQlResponse = await _graphQlClient.SendQueryAsync<GetOrgQuery>(orgRequest);
 
-          var org = graphQlResponse.Data.Organization;
-          SeedLanguages(org);
+          organization = graphQlResponse.Data.Organization;
+          SeedLanguages(organization);
 
-          return org;
+          return organization;
         }
 
         private void SeedLanguages(Organization organization)

@@ -4,7 +4,6 @@
 @inject GithubService githubService
 @implements IDisposable
 @using System.Collections.ObjectModel
-@* @using Blazorise.Icons.Material *@
 
 @page "/skills"
 
@@ -117,7 +116,7 @@ else
 </Snackbar>
 
 @code {
-
+    
     private bool isError { get; set; } = false;
     private string errorMessage = "";
     string name = "";
@@ -152,16 +151,20 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        StateContainer.SkillsPageInitialized = DateTime.Now;
+
         StateContainer.OnChange += StateHasChanged;
 
         StateContainer.SetLoading(true);
 
         try
         {
+            StateContainer.GithubDataRequested = DateTime.Now;
             // TODO: get organization from configuration or from the user and store in local storage
             var result = await githubService.GetOrgQuery("sswconsulting");
 
             StateContainer.SetLoading(false);
+            StateContainer.GithubDataFinishedLoading = DateTime.Now;
 
             foreach(var lang in githubService.Languages)
             {
@@ -215,7 +218,9 @@ else
         if(selectedChartType == ChartTypes.PieChart)
         {
             selectedSkill = skill;
+            StateContainer.PiechartRequested = DateTime.Now;
             SeedPiechartValues();
+            StateContainer.PiechartRendered = DateTime.Now;
             await skillsChart.RedrawChart();
         }
         else if(selectedChartType == ChartTypes.BarChart)
