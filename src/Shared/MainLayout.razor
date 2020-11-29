@@ -3,16 +3,18 @@
 @inherits LayoutComponentBase
 @implements IDisposable
 
-<Layout Loading="@StateContainer.isLoading">
-    <LayoutHeader>
-        <NavMenu />
-    </LayoutHeader>
-    <LayoutContent>
-        <div class="content app-content">
-            @Body
-        </div>
-    </LayoutContent>
-</Layout>
+<div class="page">
+    <Layout Loading="@StateContainer.isLoading">
+        <LayoutHeader>
+            <NavMenu />
+        </LayoutHeader>
+        <LayoutContent>
+            <div class="content app-content">
+                @Body
+            </div>
+        </LayoutContent>
+    </Layout>
+</div>
 
 @code {
     protected override void OnInitialized()

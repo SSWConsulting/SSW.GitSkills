@@ -1,0 +1,54 @@
+@* This component can be added to the Skills page
+to show some metrics that can be used for
+benchmarking. This was included to test the
+update fo .NET 5. *@
+
+@using gitskills.Models
+@inject StateContainer StateContainer
+
+<div class="chart-area">
+    <Table>
+        <TableHeader>
+            <TableHeaderCell>#</TableHeaderCell>
+            <TableHeaderCell>Event</TableHeaderCell>
+            <TableHeaderCell>TimeStamp</TableHeaderCell>
+            <TableHeaderCell>Activity</TableHeaderCell>
+            <TableHeaderCell>Duration</TableHeaderCell>
+        </TableHeader>
+        <TableRow>
+            <TableRowHeader>1</TableRowHeader>
+            <TableRowCell>State Container Initialized</TableRowCell>
+            <TableRowCell>@StateContainer.StateContainerInitialized</TableRowCell>
+            <TableRowCell>N/A</TableRowCell>
+            <TableRowCell>N/A</TableRowCell>
+        </TableRow>
+        <TableRow>
+            <TableRowHeader>2</TableRowHeader>
+            <TableRowCell>GitHub Data Requested</TableRowCell>
+            <TableRowCell>@StateContainer.GithubDataRequested</TableRowCell>
+            <TableRowCell>Load Skills Page</TableRowCell>
+            <TableRowCell>@(StateContainer.SkillsPageInitialized - StateContainer.StateContainerInitialized)</TableRowCell>
+        </TableRow>
+        <TableRow>
+            <TableRowHeader>3</TableRowHeader>
+            <TableRowCell>GitHub Data Finished Loading</TableRowCell>
+            <TableRowCell>@StateContainer.GithubDataFinishedLoading</TableRowCell>
+            <TableRowCell>Executing GraphQL query</TableRowCell>
+            <TableRowCell>@(StateContainer.GithubDataFinishedLoading - StateContainer.GithubDataRequested)</TableRowCell>
+        </TableRow>
+        <TableRow>
+            <TableRowHeader>4</TableRowHeader>
+            <TableRowCell>Pie Chart Requested</TableRowCell>
+            <TableRowCell>@StateContainer.PiechartRequested</TableRowCell>
+            <TableRowCell>N/A</TableRowCell>
+            <TableRowCell>N/A</TableRowCell>
+        </TableRow>
+        <TableRow>
+            <TableRowHeader>3</TableRowHeader>
+            <TableRowCell>Pie Chart Data Seeded</TableRowCell>
+            <TableRowCell>@StateContainer.PiechartRendered</TableRowCell>
+            <TableRowCell>Seeding Pie Chart</TableRowCell>
+            <TableRowCell>@(StateContainer.PiechartRendered - StateContainer.PiechartRequested)</TableRowCell>
+        </TableRow>
+    </Table>
+</div>
