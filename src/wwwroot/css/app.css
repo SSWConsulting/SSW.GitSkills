@@ -57,8 +57,9 @@ a, .btn-link {
 }
 
 .chart-area {
-    max-height: fit-content;
     margin: auto;
+    max-width: 75%;
+    max-height: 75%;
 }
 
 .skill-title {

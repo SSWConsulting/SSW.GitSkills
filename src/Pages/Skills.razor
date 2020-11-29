@@ -94,16 +94,20 @@ else
             </Column>
         </Row>
         
-        <div class="chart-area">
-            @if(selectedChartType == ChartTypes.PieChart)
-            {
-                <Piechart @bind-Labels="Labels" @bind-Values="skillCount" @ref="skillsChart"></Piechart>
-            }
-            else if(selectedChartType == ChartTypes.BarChart)
-            {
-                <Barchart @bind-Labels="Labels" @ref="skillBarChart"></Barchart>
-            }
-        </div>
+        <Row>
+            <Column ColumnSize="ColumnSize.Is1"/>
+                <Column ColumnSize="ColumnSize.Is10">
+                    @if(selectedChartType == ChartTypes.PieChart)
+                    {
+                        <Piechart @bind-Labels="Labels" @bind-Values="skillCount" @ref="skillsChart"></Piechart>
+                    }
+                    else if(selectedChartType == ChartTypes.BarChart)
+                    {
+                        <Barchart @bind-Labels="Labels" @ref="skillBarChart"></Barchart>
+                    }
+                </Column>
+            <Column ColumnSize="ColumnSize.Is1"/>
+        </Row>
     }
 }
 
