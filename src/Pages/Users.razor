@@ -1,0 +1,74 @@
+@page "/users"
+@page "/user/{username}"
+@using gitskills.Models
+@using gitskills.Components
+@inject StateContainer StateContainer
+@inject GithubService githubService
+@implements IDisposable
+@using System.Collections.ObjectModel
+
+<h3>User Info</h3>
+<h2>@selectedUser.Name</h2>
+
+
+<Snackbar @ref="snackbarError" Color="SnackbarColor.Danger">
+    <SnackbarBody>
+        <p>@errorMessage</p>
+        <p>Please reload the page to try again</p>
+    </SnackbarBody>
+</Snackbar>
+
+@code
+{
+    [Parameter]
+    public string username { get; set; }
+
+    OrgMember selectedUser;
+
+    List<OrgMember> OrgUsers = new List<OrgMember>();
+
+    Snackbar snackbarError;
+
+    string errorMessage;
+
+    bool isError;
+
+    Piechart skillsChart;
+    Barchart skillBarChart;
+
+    protected override async Task OnInitializedAsync()
+    {        
+        StateContainer.SkillsPageInitialized = DateTime.Now;
+
+        StateContainer.OnChange += StateHasChanged;
+
+        StateContainer.SetLoading(true);
+
+        try
+        {
+            StateContainer.GithubDataRequested = DateTime.Now;
+            // TODO: get organization from configuration or from the user and store in local storage
+            var result = await githubService.GetOrgQuery("sswconsulting");
+
+            StateContainer.SetLoading(false);
+            StateContainer.GithubDataFinishedLoading = DateTime.Now;
+
+            if(!string.IsNullOrWhiteSpace(username))
+            {
+                selectedUser = githubService.Users.Where(u => u.Name == username).FirstOrDefault();
+            }
+        }
+        catch (Exception ex)
+        {
+            StateContainer.SetLoading(false);
+            isError = true;
+            errorMessage = ex.Message;
+            snackbarError.Show();
+        }
+    }
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
+}
